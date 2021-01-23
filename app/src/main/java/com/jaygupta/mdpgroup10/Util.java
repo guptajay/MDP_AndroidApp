@@ -4,23 +4,23 @@ import java.util.ArrayList;
 
 public class Util {
 
-    static String wayPoint;
-    static String currentPoint = "0,0";
+    static String wayPoint = "Not Selected";
+    static String startPoint = "0,0";
 
     public static void setWayPoint(String wP) {
         wayPoint = wP;
     }
 
-    public static void setCurrentPoint(String sP) {
-        currentPoint = sP;
+    public static void setStartPoint(String sP) {
+        startPoint = sP;
     }
 
     public static String getWayPoint() {
         return wayPoint;
     }
 
-    public static String getCurrentPoint() {
-        return currentPoint;
+    public static String getStartPoint() {
+        return startPoint;
     }
 
     public static void initMaze(ArrayList<mazeCell> m) {
@@ -72,7 +72,7 @@ public class Util {
         String botColor = "#FF726F";
         String mazeColor = "#FFCCCB";
 
-        int currentPosition = getPositionFromCoordinate(getCurrentPoint(), mazeCells);
+        int currentPosition = getPositionFromCoordinate(getStartPoint(), mazeCells);
 
         // Remove current position & add new position
         for(int i = 0; i <= 2; i++) {
@@ -90,7 +90,7 @@ public class Util {
             mazeCells.get(position - i).setBgColor(botColor);
         }
 
-        setCurrentPoint(mazeCells.get(position).getCellName());
+        setStartPoint(mazeCells.get(position).getCellName());
         mazeCells.get(position-29).setBgColor("#940008");
     }
 }

@@ -3,4 +3,6 @@
     <string name="waypoint">Fastest-Path Waypoint</string>
     <string name="startpoint">Start Coordinate</string>
     <string name="point">Point</string>
+    <string name="information">Information</string>
+    <string name="bluetooth">Bluetooth</string>
 </resources>
