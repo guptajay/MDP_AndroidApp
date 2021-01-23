@@ -17,14 +17,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initialization of the Maze
         mazeRecView = findViewById(R.id.mazeRecView);
         ArrayList<mazeCell> mazeCells = new ArrayList<>();
-        for (int i = 0; i < 300; i++)
-            mazeCells.add(new mazeCell(String.valueOf(i)));
+        Util.initMaze(mazeCells);
 
         mazeRecViewAdapter adapter = new mazeRecViewAdapter(this);
         adapter.setCells(mazeCells);
+
         mazeRecView.setAdapter(adapter);
         mazeRecView.setLayoutManager(new GridLayoutManager(this, 15));
+
+        // Initialization of the Bot
+        Util.initBot(mazeCells);
+        // Initialization of the Goal Area
+        Util.initGoal(mazeCells);
+        adapter.notifyDataSetChanged();
     }
 }
