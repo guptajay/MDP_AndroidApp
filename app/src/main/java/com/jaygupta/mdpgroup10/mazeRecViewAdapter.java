@@ -59,7 +59,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                             case 1:
                                 Util.changeBotPosition(position, cells);
                                 notifyDataSetChanged();
-                                Snackbar.make(holder.parent, "Coordinate [" + Util.getCurrentPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(holder.parent, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
                                 break;
                         }
                     }
