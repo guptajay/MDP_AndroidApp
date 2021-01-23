@@ -1,17 +1,20 @@
 package com.jaygupta.mdpgroup10;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -19,6 +22,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
 
     private ArrayList<mazeCell> cells = new ArrayList<>();
     private Context context;
+    private CharSequence[] selectItem = new CharSequence[]{"Fastest-Path Waypoint", "Start Coordinate"};
 
     public mazeRecViewAdapter(Context context) {
         this.context = context;
@@ -34,16 +38,33 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
+        String s = String.valueOf(position);
         holder.mazeCell.setText(cells.get(position).getCellName());
         holder.mazeCellItem.setBackgroundColor(Color.parseColor(cells.get(position).getBgColor()));
-        // Robot Initial Position
-        // Set Color
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, cells.get(position).getCellName(), Toast.LENGTH_SHORT).show();
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+                builder.setTitle("Set selected coordinate [" + cells.get(position).getCellName() + "] as");
+                builder.setSingleChoiceItems(selectItem, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        switch (which) {
+                            case 0:
+                                Util.setWayPoint(cells.get(position).getCellName());
+                                Snackbar.make(holder.parent, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                                break;
+                            case 1:
+                                Util.changeBotPosition(position, cells);
+                                notifyDataSetChanged();
+                                Snackbar.make(holder.parent, "Coordinate [" + Util.getCurrentPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                                break;
+                        }
+                    }
+                });
+                builder.show();
             }
         });
     }
