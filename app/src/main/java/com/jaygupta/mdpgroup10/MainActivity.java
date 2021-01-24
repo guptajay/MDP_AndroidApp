@@ -1,6 +1,7 @@
 package com.jaygupta.mdpgroup10;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
                 });
                 builder.show();
                 return true;
+
+            case R.id.bluetooth:
+                Intent intent = new Intent(this, BluetoothUserInterface.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }
