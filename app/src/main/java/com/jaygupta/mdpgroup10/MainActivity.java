@@ -12,12 +12,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.jaygupta.mdpgroup10.adapter.mazeRecViewAdapter;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mazeRecView;
+    private CharSequence[] bluetoothDevices;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 builder.show();
+                return true;
+            case R.id.bluetooth:
+                bluetoothDevices = new CharSequence[]{"Device 1 ID", "Device 2 ID", "Device 3 ID"};
+                MaterialAlertDialogBuilder bluetooth_builder = new MaterialAlertDialogBuilder(this);
+                bluetooth_builder.setTitle("Connect to a Bluetooth Device");
+                bluetooth_builder.setSingleChoiceItems(bluetoothDevices, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Snackbar.make(getWindow().getDecorView().findViewById(R.id.mainContainer), "Bluetooth device " + bluetoothDevices[which] + " connected", Snackbar.LENGTH_LONG).show();
+                    }
+                });
+                bluetooth_builder.show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
