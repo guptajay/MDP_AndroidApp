@@ -1,4 +1,4 @@
-package com.jaygupta.mdpgroup10;
+package com.jaygupta.mdpgroup10.adapter;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.jaygupta.mdpgroup10.R;
+import com.jaygupta.mdpgroup10.Util;
+import com.jaygupta.mdpgroup10.mazeCell;
 
 import java.util.ArrayList;
 
@@ -57,8 +60,34 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                                 Snackbar.make(holder.parent, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
                                 break;
                             case 1:
-                                Util.changeBotPosition(position, cells);
-                                notifyDataSetChanged();
+                                String botColor = "#FF726F";
+                                String mazeColor = "#FFCCCB";
+
+                                int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), cells);
+
+                                // Remove current position & add new position
+                                for(int i = 0; i <= 2; i++) {
+                                    cells.get(currentPosition+i).setBgColor(mazeColor);
+                                    cells.get(position+i).setBgColor(botColor);
+                                    notifyItemChanged(currentPosition+i);
+                                    notifyItemChanged(position+i);
+                                }
+
+                                for(int i = 15; i >= 13; i--) {
+                                    cells.get(currentPosition-i).setBgColor(mazeColor);
+                                    cells.get(position-i).setBgColor(botColor);
+                                    notifyItemChanged(currentPosition-i);
+                                    notifyItemChanged(position-i);
+                                }
+
+                                for(int i = 30; i >= 28; i--) {
+                                    cells.get(currentPosition - i).setBgColor(mazeColor);
+                                    cells.get(position - i).setBgColor(botColor);
+                                    notifyItemChanged(currentPosition-i);
+                                    notifyItemChanged(position - i);
+                                }
+                                Util.setStartPoint(cells.get(position).getCellName());
+                                cells.get(position-29).setBgColor("#940008");
                                 Snackbar.make(holder.parent, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
                                 break;
                         }
