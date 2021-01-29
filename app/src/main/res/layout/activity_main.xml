@@ -4,22 +4,52 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/mainContainer">
 
     <!-- Maze -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="60"
-        android:padding="20dp">
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/mazeRecView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true">
+            android:layout_height="wrap_content">
 
         </androidx.recyclerview.widget.RecyclerView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/mazeRecView">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="Status"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:id="@+id/statusTxt"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="5dp">
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/statusTxt"
+            android:layout_centerHorizontal="true"
+            android:text="Stopped"
+            android:textSize="24sp">
+
+        </TextView>
+
+    </RelativeLayout>
     </RelativeLayout>
 
     <!-- Buttons -->

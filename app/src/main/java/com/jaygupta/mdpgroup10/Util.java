@@ -54,7 +54,7 @@ public class Util {
         return 0;
     }
 
-    private static int getPositionFromCoordinate(String location, ArrayList<mazeCell> mazeCells) {
+    public static int getPositionFromCoordinate(String location, ArrayList<mazeCell> mazeCells) {
         int i = 0;
         for(mazeCell mC : mazeCells) {
             if(mC.getCellName() != null && mC.getCellName().equals(location))
@@ -68,11 +68,12 @@ public class Util {
         mazeCells.get(position).setBgColor(color);
     }
 
-    public static void changeBotPosition(int position, ArrayList<mazeCell> mazeCells) {
+    public static int changeBotPosition(int position, ArrayList<mazeCell> mazeCells) {
         String botColor = "#FF726F";
         String mazeColor = "#FFCCCB";
 
         int currentPosition = getPositionFromCoordinate(getStartPoint(), mazeCells);
+        int returnCurrentPos = currentPosition;
 
         // Remove current position & add new position
         for(int i = 0; i <= 2; i++) {
@@ -92,5 +93,10 @@ public class Util {
 
         setStartPoint(mazeCells.get(position).getCellName());
         mazeCells.get(position-29).setBgColor("#940008");
+        return returnCurrentPos;
+    }
+
+    public static int moveForward() {
+        return 1;
     }
 }
