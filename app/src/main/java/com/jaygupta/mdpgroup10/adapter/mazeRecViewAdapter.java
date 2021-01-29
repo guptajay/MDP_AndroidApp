@@ -42,7 +42,8 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String s = String.valueOf(position);
-        holder.mazeCell.setText(cells.get(position).getCellName());
+        holder.mazeCell.setText(s);
+        //holder.mazeCell.setText(cells.get(position).getCellName());
         holder.mazeCellItem.setBackgroundColor(Color.parseColor(cells.get(position).getBgColor()));
 
         holder.parent.setOnClickListener(new View.OnClickListener() {

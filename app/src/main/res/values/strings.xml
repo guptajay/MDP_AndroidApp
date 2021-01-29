@@ -5,4 +5,7 @@
     <string name="point">Point</string>
     <string name="information">Information</string>
     <string name="bluetooth">Bluetooth</string>
+    <string name="forward">Forward</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
 </resources>

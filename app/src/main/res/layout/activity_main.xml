@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:id="@+id/mainContainer">
+    tools:context=".MainActivity">
 
     <!-- Maze -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="60"
         android:paddingLeft="20dp"
         android:paddingTop="20dp">
 
@@ -22,43 +21,112 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/mazeRecView">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:text="Status"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:id="@+id/statusTxt"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp">
-        </TextView>
+            android:layout_toRightOf="@+id/mazeRecView">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/statusTxt"
-            android:layout_centerHorizontal="true"
-            android:text="Stopped"
-            android:textSize="24sp">
+            <TextView
+                android:id="@+id/statusTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:includeFontPadding="false"
+                android:text="Status"
+                android:textSize="18sp"
+                android:textStyle="bold">
 
-        </TextView>
+            </TextView>
 
-    </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/statusTxt"
+                android:layout_centerHorizontal="true"
+                android:text="Stopped"
+                android:textSize="24sp">
+
+            </TextView>
+
+        </RelativeLayout>
     </RelativeLayout>
 
     <!-- Buttons -->
+
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="40"
-        android:textAlignment="center">
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:id="@+id/drivingBtn"
+            >
+
+            <Button
+                android:id="@+id/moveForwardBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/forward"
+                android:layout_centerHorizontal="true"
+                android:onClick="moveForward">
+
+            </Button>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/moveForwardBtn">
+
+
+                <Button
+                    android:id="@+id/moveLeftBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/left">
+
+                </Button>
+
+
+                <Button
+                    android:id="@+id/moveRightBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@id/moveLeftBtn"
+                    android:text="@string/right">
+
+                </Button>
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/drivingBtn"
+            android:layout_marginLeft="50dp">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Dummy Btn">
+            </Button>
+
+        </RelativeLayout>
+
 
     </RelativeLayout>
+
+
 
 </LinearLayout>
