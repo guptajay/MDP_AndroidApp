@@ -8,15 +8,14 @@
     <RelativeLayout
         android:layout_width="28dp"
         android:layout_height="28dp"
-        android:background="@color/light_red"
         android:layout_margin="1dp"
-        android:id="@+id/mazeCellItem">
+        android:id="@+id/mazeCellItem"
+        android:background="@color/maze">
 
         <TextView
             android:id="@+id/mazeCell"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OK"
             android:textSize="10sp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true">

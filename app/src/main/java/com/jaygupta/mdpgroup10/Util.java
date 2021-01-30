@@ -1,11 +1,15 @@
 package com.jaygupta.mdpgroup10;
 
+import android.app.Activity;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 
 public class Util {
 
     static String wayPoint = "Not Selected";
     static String startPoint = "0,0";
+    static String heading = "forward";
 
     public static void setWayPoint(String wP) {
         wayPoint = wP;
@@ -23,28 +27,30 @@ public class Util {
         return startPoint;
     }
 
+    public static String getHeading() {return heading; }
+
+    public static void setHeading(String head) { heading = head; }
+
     public static void initMaze(ArrayList<mazeCell> m) {
         for (int y = 19; y >= 0; y--)
             for (int x = 0; x < 15; x++)
-                m.add(new mazeCell(x + "," + y, "#FFCCCB"));
+                m.add(new mazeCell(x + "," + y, R.color.maze));
     }
 
     public static void initBot(ArrayList<mazeCell> m) {
-        String color = "#FF726F";
         for (int y = 0; y <= 2; y++)
             for (int x = 0; x <= 2; x++)
-                updateBgColor(x + "," + y, m, color);
-        updateBgColor("1,2", m, "#940008");
+                updateBgColor(x + "," + y, m, R.color.bot);
+        updateBgColor("1,2", m, R.color.heading);
     }
 
     public static void initGoal(ArrayList<mazeCell> m) {
-        String color = "#A6F1A6";
         for (int y = 17; y <= 19; y++)
             for (int x = 12; x <= 14; x++)
-                updateBgColor(x + "," + y, m, color);
+                updateBgColor(x + "," + y, m, R.color.goal);
     }
 
-    private static int updateBgColor(String location, ArrayList<mazeCell> mazeCells, String color) {
+    private static int updateBgColor(String location, ArrayList<mazeCell> mazeCells, int color) {
         int i = 0;
         for(mazeCell mC : mazeCells) {
             if(mC.getCellName() != null && mC.getCellName().equals(location))
@@ -64,39 +70,8 @@ public class Util {
         return 0;
     }
 
-    public static void setSingleCellByPosition(int position, ArrayList<mazeCell> mazeCells, String color) {
-        mazeCells.get(position).setBgColor(color);
-    }
-
-    public static int changeBotPosition(int position, ArrayList<mazeCell> mazeCells) {
-        String botColor = "#FF726F";
-        String mazeColor = "#FFCCCB";
-
-        int currentPosition = getPositionFromCoordinate(getStartPoint(), mazeCells);
-        int returnCurrentPos = currentPosition;
-
-        // Remove current position & add new position
-        for(int i = 0; i <= 2; i++) {
-            mazeCells.get(currentPosition+i).setBgColor(mazeColor);
-            mazeCells.get(position+i).setBgColor(botColor);
-        }
-
-        for(int i = 15; i >= 13; i--) {
-            mazeCells.get(currentPosition-i).setBgColor(mazeColor);
-            mazeCells.get(position-i).setBgColor(botColor);
-        }
-
-        for(int i = 30; i >= 28; i--) {
-            mazeCells.get(currentPosition - i).setBgColor(mazeColor);
-            mazeCells.get(position - i).setBgColor(botColor);
-        }
-
-        setStartPoint(mazeCells.get(position).getCellName());
-        mazeCells.get(position-29).setBgColor("#940008");
-        return returnCurrentPos;
-    }
-
-    public static int moveForward() {
-        return 1;
+    public static void setStatus(Activity activity, String s) {
+        TextView robotStatus = activity.findViewById(R.id.botStateText);
+        robotStatus.setText(s);
     }
 }

@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="20dp"
+        android:paddingStart="20dp"
         android:paddingTop="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -24,7 +24,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/mazeRecView">
+            android:layout_toEndOf="@+id/mazeRecView">
 
             <TextView
                 android:id="@+id/statusTxt"
@@ -33,18 +33,19 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="5dp"
                 android:includeFontPadding="false"
-                android:text="Status"
+                android:text="@string/status"
                 android:textSize="18sp"
                 android:textStyle="bold">
 
             </TextView>
 
             <TextView
+                android:id="@+id/botStateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/statusTxt"
                 android:layout_centerHorizontal="true"
-                android:text="Stopped"
+                android:text="@string/statusStop"
                 android:textSize="24sp">
 
             </TextView>
@@ -57,23 +58,22 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="50dp">
 
         <RelativeLayout
+            android:id="@+id/drivingBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:id="@+id/drivingBtn"
-            >
+            android:textAlignment="center">
 
             <Button
                 android:id="@+id/moveForwardBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/forward"
                 android:layout_centerHorizontal="true"
-                android:onClick="moveForward">
+                android:onClick="moveForward"
+                android:text="@string/forward">
 
             </Button>
 
@@ -88,6 +88,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:onClick="moveLeft"
                     android:text="@string/left">
 
                 </Button>
@@ -97,9 +98,10 @@
                     android:id="@+id/moveRightBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
-                    android:layout_toRightOf="@id/moveLeftBtn"
+                    android:layout_toEndOf="@id/moveLeftBtn"
+                    android:onClick="moveRight"
                     android:text="@string/right">
 
                 </Button>
@@ -112,21 +114,69 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/drivingBtn"
-            android:layout_marginLeft="50dp">
+            android:layout_marginStart="50dp"
+            android:layout_toEndOf="@+id/drivingBtn">
 
-            <Button
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/manulAutoControl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:text="Dummy Btn">
-            </Button>
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:checked="true"
+                android:text="@string/manualControl">
+            </androidx.appcompat.widget.SwitchCompat>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/manulAutoControl">
+
+
+                <Button
+                    android:id="@+id/f1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/f1">
+
+                </Button>
+
+
+                <Button
+                    android:id="@+id/f2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+
+                    android:layout_toEndOf="@id/f1"
+                    android:text="@string/f2">
+
+                </Button>
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
 
     </RelativeLayout>
 
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:contentDescription="@string/settingsBtn"
+            android:src="@drawable/ic_settings">
+
+        </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
 </LinearLayout>

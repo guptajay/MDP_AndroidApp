@@ -4,8 +4,14 @@
     <string name="startpoint">Start Coordinate</string>
     <string name="point">Point</string>
     <string name="information">Information</string>
+    <string name="status">Status</string>
+    <string name="statusStop">Stopped</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="forward">Forward</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
+    <string name="f1">F1</string>
+    <string name="f2">F2</string>
+    <string name="manualControl">Manual</string>
+    <string name="settingsBtn">Settings</string>
 </resources>

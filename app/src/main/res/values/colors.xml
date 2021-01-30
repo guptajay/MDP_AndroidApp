@@ -7,5 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="light_red">#FFCCCB</color>
+    <color name="bot">#FF726F</color>
+    <color name="maze">#FFCCCB</color>
+    <color name="heading">#940008</color>
+    <color name="goal">#A6F1A6</color>
 </resources>
