@@ -1,4 +1,4 @@
-package com.jaygupta.mdpgroup10;
+package com.jaygupta.mdpgroup10.bluetooth_services;
 
 
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +31,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 
 import com.google.android.material.snackbar.Snackbar;
+import com.jaygupta.mdpgroup10.R;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
 import java.util.ArrayList;
@@ -85,12 +86,12 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         }
     };
 
-    public BroadcastReceiver receiver = new BroadcastReceiver() {
+    public BroadcastReceiver messageReceived = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
                 String str = intent.getStringExtra("receivedMessage");
-                messageReceivedTextView.setText(str);
+                messageReceivedTextView.append('\n'+str);
 
             }
         }
@@ -117,7 +118,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
 
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("incomingMessage"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceived, new IntentFilter("incomingMessage"));
 
 
 

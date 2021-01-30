@@ -1,8 +1,7 @@
-package com.jaygupta.mdpgroup10;
+package com.jaygupta.mdpgroup10.bluetooth_services;
 
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -10,14 +9,11 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +20,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.jaygupta.mdpgroup10.adapter.mazeRecViewAdapter;
 
 import java.util.ArrayList;
+
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionService;
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothUI;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
 public class MainActivity extends AppCompatActivity {
