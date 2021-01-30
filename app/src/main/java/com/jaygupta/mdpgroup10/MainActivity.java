@@ -1,11 +1,13 @@
 package com.jaygupta.mdpgroup10;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,6 +21,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.jaygupta.mdpgroup10.adapter.mazeRecViewAdapter;
 
 import java.util.ArrayList;
+import com.jaygupta.mdpgroup10.utils.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Constants CONSTANTS;
 
         // Initialization of the Maze
         mazeRecView = findViewById(R.id.mazeRecView);
@@ -47,23 +52,33 @@ public class MainActivity extends AppCompatActivity {
         // Initialization of the Goal Area
         Util.initGoal(mazeCells);
         adapter.notifyDataSetChanged();
-       // reconnectionHandler = new Handler();
-        //reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
+
+
 
     }
 
-//    Runnable reconnectionRunnable = new Runnable() {
-//        @Override
-//        public void run() {
-//
-//            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-//            if (sharedPreferences.contains("connStatus"))
-//                connStatus = sharedPreferences.getString("connStatus", "");
-//            invalidateOptionsMenu();
-//            reconnectionHandler.removeCallbacks(reconnectionRunnable);
-//        }
-//
-//    };
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkBluetoothStatus();
+
+    }
+
+    private void checkBluetoothStatus() {
+        if(!BluetoothAdapter.getDefaultAdapter().isEnabled()){
+            connStatus= Constants.BLUETOOTH_DISABLED;
+        }
+        if(BluetoothAdapter.getDefaultAdapter().isEnabled()){
+            if(!BluetoothConnectionService.BluetoothConnectionStatus)
+                connStatus=Constants.BLUETOOTH_DISCONNECTED;
+            else{
+                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+                if (sharedPreferences.contains("connStatus"))
+                    connStatus = sharedPreferences.getString("connStatus", "");
+            }
+        }
+        invalidateOptionsMenu();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

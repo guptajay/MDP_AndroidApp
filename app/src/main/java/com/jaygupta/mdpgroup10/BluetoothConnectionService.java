@@ -136,8 +136,7 @@ public class BluetoothConnectionService extends Activity {
                     mBluetoothPopUpActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Snackbar.make(getWindow().getDecorView(),"Failed to connect to the Device", Snackbar.LENGTH_SHORT).show();
-                            //Snackbar.(mContext, "Failed to connect to the Device.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(mContext, "Failed to connect to the Device.", Toast.LENGTH_LONG).show();
                         }
                     });
                 } catch (Exception z) {
