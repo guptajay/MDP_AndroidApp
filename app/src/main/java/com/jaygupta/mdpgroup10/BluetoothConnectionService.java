@@ -8,8 +8,8 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
@@ -22,11 +22,11 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 
 public class BluetoothConnectionService {
-    BluetoothUserInterface mBluetoothPopup;
+    BluetoothUI mBluetoothPopup;
     private static BluetoothConnectionService instance;
     private static final String TAG = "DebuggingTag";
 
-    private static final String appName = "MDP_Group_15";
+    private static final String appName = "MDP_Group_10";
     public static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private final BluetoothAdapter mBluetoothAdapter;
@@ -37,6 +37,8 @@ public class BluetoothConnectionService {
     private ConnectThread mConnectThread;
     private BluetoothDevice mDevice;
     private UUID deviceUUID;
+
+    private ProgressBar progressBar;
     ProgressDialog mProgressDialog;
     Intent connectionStatus;
 
@@ -53,15 +55,15 @@ public class BluetoothConnectionService {
         private final BluetoothServerSocket ServerSocket;
 
         public AcceptThread() {
-            BluetoothServerSocket tmp = null;
+            BluetoothServerSocket bluetoothServerSocket = null;
 
             try {
-                tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, myUUID);
+                bluetoothServerSocket = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, myUUID);
                 Log.d(TAG, "Accept Thread: Setting up Server using: " + myUUID);
             }catch(IOException e){
                 Log.e(TAG, "Accept Thread: IOException: " + e.getMessage());
             }
-            ServerSocket = tmp;
+            ServerSocket = bluetoothServerSocket;
         }
         public void run(){
             Log.d(TAG, "run: AcceptThread Running. ");
@@ -127,7 +129,7 @@ public class BluetoothConnectionService {
                 }
                 Log.d(TAG, "RUN: ConnectThread: could not connect to UUID."+ myUUID);
                 try {
-                    BluetoothUserInterface mBluetoothPopUpActivity = (BluetoothUserInterface) mContext;
+                    BluetoothUI mBluetoothPopUpActivity = (BluetoothUI) mContext;
                     mBluetoothPopUpActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
