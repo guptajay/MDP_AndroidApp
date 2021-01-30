@@ -1,6 +1,7 @@
 package com.jaygupta.mdpgroup10;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -13,7 +14,10 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +25,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
-public class BluetoothConnectionService {
+public class BluetoothConnectionService extends Activity {
     BluetoothUI mBluetoothPopup;
     private static BluetoothConnectionService instance;
     private static final String TAG = "DebuggingTag";
@@ -38,8 +42,7 @@ public class BluetoothConnectionService {
     private BluetoothDevice mDevice;
     private UUID deviceUUID;
 
-    private ProgressBar progressBar;
-    ProgressDialog mProgressDialog;
+    AlertDialog alertDialog;
     Intent connectionStatus;
 
     public static boolean BluetoothConnectionStatus=false;
@@ -133,7 +136,8 @@ public class BluetoothConnectionService {
                     mBluetoothPopUpActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(mContext, "Failed to connect to the Device.", Toast.LENGTH_LONG).show();
+                            Snackbar.make(getWindow().getDecorView(),"Failed to connect to the Device", Snackbar.LENGTH_SHORT).show();
+                            //Snackbar.(mContext, "Failed to connect to the Device.", Toast.LENGTH_LONG).show();
                         }
                     });
                 } catch (Exception z) {
@@ -142,7 +146,7 @@ public class BluetoothConnectionService {
 
             }
             try {
-                mProgressDialog.dismiss();
+                alertDialog.dismiss();
             } catch(NullPointerException e){
                 e.printStackTrace();
             }
@@ -175,7 +179,7 @@ public class BluetoothConnectionService {
         Log.d(TAG, "startClient: Started.");
 
         try {
-            mProgressDialog = ProgressDialog.show(mContext, "Connecting Bluetooth", "Please Wait...", true);
+            alertDialog.show();
         } catch (Exception e) {
             Log.d(TAG, "StartClientThread Dialog show failure");
         }

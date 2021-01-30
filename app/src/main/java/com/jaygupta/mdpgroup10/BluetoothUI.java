@@ -109,11 +109,62 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_user_interface);
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        initializeVariables();
+        checkBluetoothStatus();
 
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
+
+        IntentFilter bluetoothStateChangeFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(checkBluetoothStatus,bluetoothStateChangeFilter);
+
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(mBroadcastReceiver4, filter);
+
+        IntentFilter filter2 = new IntentFilter("ConnectionStatus");
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
+
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("incomingMessage"));
+
+
+
+
+        otherDevicesListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            mBluetoothAdapter.cancelDiscovery();
+            pairedDevicesListView.setAdapter(mPairedDevlceListAdapter);
+
+            String deviceName = mNewBTDevices.get(i).getName();
+            String deviceAddress = mNewBTDevices.get(i).getAddress();
+            Log.d(TAG, "onItemClick: A device is selected.");
+            Log.d(TAG, "onItemClick: DEVICE NAME: " + deviceName);
+            Log.d(TAG, "onItemClick: DEVICE ADDRESS: " + deviceAddress);
+
+
+            Log.d(TAG, "onItemClick: Initiating pairing with " + deviceName);
+            mNewBTDevices.get(i).createBond();
+
+            mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
+            mBTDevice = mNewBTDevices.get(i);
+
+        });
+
+        pairedDevicesListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            mBluetoothAdapter.cancelDiscovery();
+            otherDevicesListView.setAdapter(mNewDevlceListAdapter);
+
+            String deviceName = mPairedBTDevices.get(i).getName();
+            String deviceAddress = mPairedBTDevices.get(i).getAddress();
+            Log.d(TAG, "onItemClick: A device is selected.");
+            Log.d(TAG, "onItemClick: DEVICE NAME: " + deviceName);
+            Log.d(TAG, "onItemClick: DEVICE ADDRESS: " + deviceAddress);
+
+            mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
+            mBTDevice = mPairedBTDevices.get(i);
+        });
+
+    }
+
+
+    protected void initializeVariables(){
         messageReceivedTextView=findViewById(R.id.messageReceivedTextView);
 
 
@@ -130,80 +181,33 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         searchBtn.setOnClickListener(this);
 
 
-        //checkBluetoothStatus();
+         alertDialog = new AlertDialog.Builder(this).create();
+         alertDialog.setTitle("Connection interrupted");
+         alertDialog.setMessage("Reconnecting");
+         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+                 new DialogInterface.OnClickListener() {
+                     public void onClick(DialogInterface dialog, int which) {
+                         dialog.dismiss();
+                     }
+                 });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-        IntentFilter stateIntentFilter = new IntentFilter(mBluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
-        registerReceiver(checkBluetoothStatus, stateIntentFilter);
-
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mBroadcastReceiver4, filter);
-
-        IntentFilter filter2 = new IntentFilter("ConnectionStatus");
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
-
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("incomingMessage"));
-
-
-
-        otherDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                mBluetoothAdapter.cancelDiscovery();
-                pairedDevicesListView.setAdapter(mPairedDevlceListAdapter);
-
-                String deviceName = mNewBTDevices.get(i).getName();
-                String deviceAddress = mNewBTDevices.get(i).getAddress();
-                Log.d(TAG, "onItemClick: A device is selected.");
-                Log.d(TAG, "onItemClick: DEVICE NAME: " + deviceName);
-                Log.d(TAG, "onItemClick: DEVICE ADDRESS: " + deviceAddress);
-
-
-                Log.d(TAG, "onItemClick: Initiating pairing with " + deviceName);
-                mNewBTDevices.get(i).createBond();
-
-                mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
-                mBTDevice = mNewBTDevices.get(i);
-
-            }
-        });
-
-        pairedDevicesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                mBluetoothAdapter.cancelDiscovery();
-                otherDevicesListView.setAdapter(mNewDevlceListAdapter);
-
-                String deviceName = mPairedBTDevices.get(i).getName();
-                String deviceAddress = mPairedBTDevices.get(i).getAddress();
-                Log.d(TAG, "onItemClick: A device is selected.");
-                Log.d(TAG, "onItemClick: DEVICE NAME: " + deviceName);
-                Log.d(TAG, "onItemClick: DEVICE ADDRESS: " + deviceAddress);
-
-                mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
-                mBTDevice = mPairedBTDevices.get(i);
-            }
-        });
-
-
-
-        alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Connection interrupted");
-        alertDialog.setMessage("Reconnecting");
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+        if(!mBluetoothAdapter.isEnabled()){
+            Log.d(TAG,"Bluetooth Disabled");
+        }
+        if(mBluetoothAdapter.isEnabled()){
+            Log.d(TAG,"Bluetooth Enabled");
+        }
     }
 
     private BroadcastReceiver checkBluetoothStatus = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG,"Bluetooth state changed");
-
             if(!mBluetoothAdapter.isEnabled())
                 connStatus="Disconnected";
             invalidateOptionsMenu();
@@ -212,6 +216,11 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
     };
 
     private void checkBluetoothStatus() {
+//        if(!mBluetoothAdapter.isEnabled()){
+//            IntentFilter stateIntentFilter = new IntentFilter(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+//            registerReceiver(checkBluetoothStatus, stateIntentFilter);
+//        }
+
 
         sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
         if (sharedPreferences.contains("connStatus"))
@@ -223,7 +232,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
     public void connectBluetooth(){
         if(mBTDevice ==null)
         {
-            Toast.makeText(BluetoothUI.this, "Please Select a Device before connecting.", Toast.LENGTH_LONG).show();
+            Snackbar.make(findViewById(android.R.id.content),"Please Select a Device before connecting.", Snackbar.LENGTH_SHORT).show();
         }
         else {
             startConnection();
@@ -345,8 +354,9 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
     private BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
+            Log.d(TAG,"mBroadcastReceiver4");
 
+            final String action = intent.getAction();
             if(action.equals(BluetoothDevice.ACTION_BOND_STATE_CHANGED)){
                 BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
