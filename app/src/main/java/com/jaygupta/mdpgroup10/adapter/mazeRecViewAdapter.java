@@ -39,55 +39,10 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String s = String.valueOf(position);
+        //String s = String.valueOf(position);
         //holder.mazeCell.setText(s);
         holder.mazeCell.setText(cells.get(position).getCellName());
         holder.mazeCellItem.setBackgroundResource(cells.get(position).getBgColor());
-
-        holder.parent.setOnClickListener(v -> {
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
-            builder.setTitle("Set selected coordinate [" + cells.get(position).getCellName() + "] as");
-
-            builder.setSingleChoiceItems(selectItem, -1, (dialog, which) -> {
-                dialog.dismiss();
-                switch (which) {
-                    case 0:
-                        Util.setWayPoint(cells.get(position).getCellName());
-                        Snackbar.make(holder.parent, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
-                        break;
-                    case 1:
-                        int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), cells);
-
-                        // Remove current position & add new position
-                        for (int i = 0; i <= 2; i++) {
-                            cells.get(currentPosition + i).setBgColor(R.color.maze);
-                            cells.get(position + i).setBgColor(R.color.bot);
-                            notifyItemChanged(currentPosition + i);
-                            notifyItemChanged(position + i);
-                        }
-
-                        for (int i = 15; i >= 13; i--) {
-                            cells.get(currentPosition - i).setBgColor(R.color.maze);
-                            cells.get(position - i).setBgColor(R.color.bot);
-                            notifyItemChanged(currentPosition - i);
-                            notifyItemChanged(position - i);
-                        }
-
-                        for (int i = 30; i >= 28; i--) {
-                            cells.get(currentPosition - i).setBgColor(R.color.maze);
-                            cells.get(position - i).setBgColor(R.color.bot);
-                            notifyItemChanged(currentPosition - i);
-                            notifyItemChanged(position - i);
-                        }
-                        Util.setStartPoint(cells.get(position).getCellName());
-                        cells.get(position - 29).setBgColor(R.color.heading);
-                        Util.setHeading("forward");
-                        Snackbar.make(holder.parent, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
-                        break;
-                }
-            });
-            builder.show();
-        });
     }
 
     @Override
@@ -95,7 +50,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
         return cells.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mazeCell;
         private CardView parent;
@@ -106,6 +61,54 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
             mazeCell = itemView.findViewById(R.id.mazeCell);
             parent = itemView.findViewById(R.id.mazeCellLayout);
             mazeCellItem = itemView.findViewById(R.id.mazeCellItem);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int pos = getLayoutPosition();
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(context);
+            builder.setTitle("Set selected coordinate [" + cells.get(pos).getCellName() + "] as");
+
+            builder.setSingleChoiceItems(selectItem, -1, (dialog, which) -> {
+                dialog.dismiss();
+                switch (which) {
+                    case 0:
+                        Util.setWayPoint(cells.get(pos).getCellName());
+                        Snackbar.make(v, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                        break;
+                    case 1:
+                        int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), cells);
+
+                        // Remove current position & add new position
+                        for (int i = 0; i <= 2; i++) {
+                            cells.get(currentPosition + i).setBgColor(R.color.maze);
+                            cells.get(pos + i).setBgColor(R.color.bot);
+                            notifyItemChanged(currentPosition + i);
+                            notifyItemChanged(pos + i);
+                        }
+
+                        for (int i = 15; i >= 13; i--) {
+                            cells.get(currentPosition - i).setBgColor(R.color.maze);
+                            cells.get(pos - i).setBgColor(R.color.bot);
+                            notifyItemChanged(currentPosition - i);
+                            notifyItemChanged(pos - i);
+                        }
+
+                        for (int i = 30; i >= 28; i--) {
+                            cells.get(currentPosition - i).setBgColor(R.color.maze);
+                            cells.get(pos - i).setBgColor(R.color.bot);
+                            notifyItemChanged(currentPosition - i);
+                            notifyItemChanged(pos - i);
+                        }
+                        Util.setStartPoint(cells.get(pos).getCellName());
+                        cells.get(pos - 29).setBgColor(R.color.heading);
+                        Util.setHeading("forward");
+                        Snackbar.make(v, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                        break;
+                }
+            });
+            builder.show();
         }
     }
 }
