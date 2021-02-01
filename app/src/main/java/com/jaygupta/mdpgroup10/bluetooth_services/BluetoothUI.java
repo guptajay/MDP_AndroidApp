@@ -22,7 +22,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,6 +37,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.jaygupta.mdpgroup10.R;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
@@ -47,16 +51,24 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
     public ArrayList<BluetoothDevice> pairedBtDevices;
     public DeviceListAdapter deviceListAdapter;
     public DeviceListAdapter pairedDeviceListAdapter;
+
+
+
     static Constants CONSTANTS;
     ListView otherDevicesListView;
     ListView pairedDevicesListView;
+    ListView messagesListView;
     Button connectBtn;
     Button searchBtn;
+    Button sendBtn;
 
+    EditText sendInput;
+
+    ArrayList<String> messageListItems=new ArrayList<String>();
+    ArrayAdapter<String> messageListAdapter;
 
     AlertDialog alertDialog;
 
-    TextView messageReceivedTextView;
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
@@ -90,9 +102,10 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null) {
-                String str = intent.getStringExtra("receivedMessage");
-                messageReceivedTextView.append('\n'+str);
-
+                String receivedMessage = intent.getStringExtra("receivedMessage");
+                messageListItems.add( "Received: " + receivedMessage);
+                messageListAdapter.notifyDataSetChanged();
+                messagesListView.setSelection(messageListAdapter.getCount()-1);
             }
         }
     };
@@ -106,7 +119,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         initializeVariables();
         checkBluetoothStatus();
 
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         IntentFilter bluetoothStateChangeFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(checkBluetoothStatus,bluetoothStateChangeFilter);
@@ -137,7 +150,6 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
             Log.d(TAG, "onItemClick: Initiating pairing with " + deviceName);
             newBtDevices.get(i).createBond();
 
-            mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
             mBTDevice = newBtDevices.get(i);
 
 
@@ -157,25 +169,52 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
             mBTDevice = pairedBtDevices.get(i);
         });
 
+        messageListItems=new ArrayList<String>();
+        messageListAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, messageListItems);
+        messagesListView.setAdapter(messageListAdapter);
+
+    }
+
+    private void sendData() {
+
+        String sentText=sendInput.getText().toString();
+        messageListItems.add("Sent: " + sentText);
+        messageListAdapter.notifyDataSetChanged();
+        messagesListView.setSelection(messageListAdapter.getCount()-1);
+
+
+        if(!mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISABLED) &&
+                !mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISCONNECTED))
+            mBluetoothConnection.write(sentText.getBytes(StandardCharsets.UTF_8));
+
     }
 
 
-    protected void initializeVariables(){
-        messageReceivedTextView=findViewById(R.id.messageReceivedTextView);
 
+
+    protected void initializeVariables(){
+        //messageReceivedTextView=findViewById(R.id.messageReceivedTextView);
+        sendInput=findViewById(R.id.sentInput);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         otherDevicesListView = (ListView) findViewById(R.id.otherDevicesListView);
         pairedDevicesListView = (ListView) findViewById(R.id.pairedDevicesListView);
+        messagesListView = (ListView) findViewById(R.id.messagesListView);
+
         newBtDevices = new ArrayList<>();
         pairedBtDevices = new ArrayList<>();
 
         connectBtn = (Button) findViewById(R.id.connectBtn);
         searchBtn=(Button) findViewById(R.id.searchBtn);
+        sendBtn=(Button)findViewById(R.id.sendBtn);
+
         connectBtn.setOnClickListener(this);
         searchBtn.setOnClickListener(this);
+        sendBtn.setOnClickListener(this);
 
+
+        mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
 
          alertDialog = new AlertDialog.Builder(this).create();
          alertDialog.setTitle("Connection interrupted");
@@ -192,20 +231,23 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
     protected void onStart() {
         super.onStart();
 
-        if(!bluetoothAdapter.isEnabled()){
+
+        if(mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISABLED)){
             Log.d(TAG,"Bluetooth Disabled");
             connStatus=CONSTANTS.BLUETOOTH_DISABLED;
         }
-        if(bluetoothAdapter.isEnabled()){
-            Log.d(TAG,"Bluetooth Enabled");
-            if(!BluetoothConnectionService.BluetoothConnectionStatus)
-                connStatus=CONSTANTS.BLUETOOTH_DISCONNECTED;
-            else{
-                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-                if (sharedPreferences.contains("connStatus"))
-                    connStatus = sharedPreferences.getString("connStatus", "");
-            }
+
+        else if(mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISCONNECTED)){
+            Log.d(TAG,"Bluetooth Disconnected");
+            connStatus=CONSTANTS.BLUETOOTH_DISCONNECTED;
         }
+
+        else{
+            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+            if (sharedPreferences.contains("connStatus"))
+                connStatus = sharedPreferences.getString("connStatus", "");
+        }
+
         invalidateOptionsMenu();
     }
 
@@ -213,22 +255,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG,"Bluetooth state changed");
-
-            if(!bluetoothAdapter.isEnabled()){
-                Log.d(TAG,"Bluetooth Disabled");
-                connStatus="Disabled";
-            }
-            if(bluetoothAdapter.isEnabled()){
-                Log.d(TAG,"Bluetooth Enabled");
-                if(!BluetoothConnectionService.BluetoothConnectionStatus)
-                    connStatus="Disconnected";
-                else{
-                    SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-                    if (sharedPreferences.contains("connStatus"))
-                        connStatus = sharedPreferences.getString("connStatus", "");
-                }
-            }
-            invalidateOptionsMenu();
+            onStart();
         }
 
     };
@@ -498,6 +525,11 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
                 searchDevices();
                 break;
 
+            case R.id.sendBtn:
+                sendData();
+                break;
+
         }
     }
+
 }
