@@ -18,4 +18,9 @@
         app:showAsAction="always"
         >
     </item>
+
+    <item android:id="@+id/configureStrings"
+        android:title="@string/configureStrings"
+        app:showAsAction="never">
+    </item>
 </menu>

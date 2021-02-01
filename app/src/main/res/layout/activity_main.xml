@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity"
-    android:id="@+id/mainContainer">
+    tools:context=".MainActivity">
 
     <!-- Maze -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="60"
-        android:paddingLeft="20dp"
+        android:paddingStart="20dp"
         android:paddingTop="20dp">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -22,42 +21,144 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/mazeRecView">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:includeFontPadding="false"
-            android:text="Status"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:id="@+id/statusTxt"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="5dp">
-        </TextView>
+            android:layout_toEndOf="@+id/mazeRecView">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/statusTxt"
-            android:layout_centerHorizontal="true"
-            android:text="Stopped"
-            android:textSize="24sp">
+            <TextView
+                android:id="@+id/statusTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:includeFontPadding="false"
+                android:text="@string/status"
+                android:textSize="18sp"
+                android:textStyle="bold">
 
-        </TextView>
+            </TextView>
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/botStateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/statusTxt"
+                android:layout_centerHorizontal="true"
+                android:text="@string/statusStop"
+                android:textSize="24sp">
+
+            </TextView>
+
+        </RelativeLayout>
     </RelativeLayout>
 
     <!-- Buttons -->
+
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="40"
-        android:textAlignment="center">
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp">
+
+        <RelativeLayout
+            android:id="@+id/drivingBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center">
+
+            <Button
+                android:id="@+id/moveForwardBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:onClick="moveForward"
+                android:text="@string/forward">
+
+            </Button>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/moveForwardBtn">
+
+
+                <Button
+                    android:id="@+id/moveLeftBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:onClick="moveLeft"
+                    android:text="@string/left">
+
+                </Button>
+
+
+                <Button
+                    android:id="@+id/moveRightBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/moveLeftBtn"
+                    android:onClick="moveRight"
+                    android:text="@string/right">
+
+                </Button>
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_toEndOf="@+id/drivingBtn"
+            android:id="@+id/f1f2toggle">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/manulAutoControl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:checked="true"
+                android:text="@string/manualControl">
+
+            </androidx.appcompat.widget.SwitchCompat>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/manulAutoControl">
+
+
+                <Button
+                    android:id="@+id/f1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/f1">
+
+                </Button>
+
+
+                <Button
+                    android:id="@+id/f2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+
+                    android:layout_toEndOf="@id/f1"
+                    android:text="@string/f2">
+
+                </Button>
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
