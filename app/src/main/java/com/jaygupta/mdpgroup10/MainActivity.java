@@ -264,7 +264,8 @@ public class MainActivity extends AppCompatActivity {
         text.setText("Text view 2");*/
             dialog.show();
             return true;
-        }
+        } else
+            return super.onOptionsItemSelected(item);
     }
       
 }
