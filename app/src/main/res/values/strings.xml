@@ -18,4 +18,6 @@
     <string name="stringf2">String F2</string>
     <string name="save">Save</string>
     <string name="configureStrings">Configure F1/F2 Strings</string>
+    <string name="f1_key">f1Key</string>
+    <string name="f2_key">f2Key</string>
 </resources>
