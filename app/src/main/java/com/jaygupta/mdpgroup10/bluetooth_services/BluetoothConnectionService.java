@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.jaygupta.mdpgroup10.utils.Constants;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -282,4 +284,19 @@ public class BluetoothConnectionService extends Activity {
         Log.d(TAG, "write: Write is called." );
         mConnectedThread.write(out);
     }
+
+    public String bluetoothStatus() {
+        if(!BluetoothAdapter.getDefaultAdapter().isEnabled()){
+            return Constants.BLUETOOTH_DISABLED;
+        }
+        if(BluetoothAdapter.getDefaultAdapter().isEnabled()){
+            if(!BluetoothConnectionService.BluetoothConnectionStatus)
+                return Constants.BLUETOOTH_DISCONNECTED;
+            else{
+                return Constants.BLUETOOTH_CONNECTED;
+            }
+        }
+        return null;
+    }
+
 }
