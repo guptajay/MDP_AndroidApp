@@ -1,8 +1,13 @@
 package com.jaygupta.mdpgroup10;
 
 import android.app.Dialog;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,17 +23,25 @@ import com.jaygupta.mdpgroup10.adapter.mazeRecViewAdapter;
 
 import java.util.ArrayList;
 
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionService;
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothUI;
+import com.jaygupta.mdpgroup10.utils.Constants;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mazeRecView;
     private CharSequence[] bluetoothDevices;
     ArrayList<mazeCell> mazeCells;
     mazeRecViewAdapter adapter;
+    private String connStatus;
+    Handler reconnectionHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Constants CONSTANTS;
 
         // Initialization of the Maze
         mazeRecView = findViewById(R.id.mazeRecView);
@@ -47,6 +60,32 @@ public class MainActivity extends AppCompatActivity {
         // Initialization of the Goal Area
         Util.initGoal(mazeCells);
         adapter.notifyDataSetChanged();
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkBluetoothStatus();
+
+    }
+
+    private void checkBluetoothStatus() {
+        if(!BluetoothAdapter.getDefaultAdapter().isEnabled()){
+            connStatus= Constants.BLUETOOTH_DISABLED;
+        }
+        if(BluetoothAdapter.getDefaultAdapter().isEnabled()){
+            if(!BluetoothConnectionService.BluetoothConnectionStatus)
+                connStatus=Constants.BLUETOOTH_DISCONNECTED;
+            else{
+                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
+                if (sharedPreferences.contains("connStatus"))
+                    connStatus = sharedPreferences.getString("connStatus", "");
+            }
+        }
+        invalidateOptionsMenu();
     }
 
     public void moveForward(View view) {
@@ -191,6 +230,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.bluetooth_status);
+        item.setTitle(this.connStatus);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         CharSequence[] infoItem = new CharSequence[]{"Fastest-Path Waypoint: [" + Util.getWayPoint() + "]", "Start Coordinate: [" + Util.getStartPoint() + "]"};
         if (item.getItemId() == R.id.information) {
@@ -202,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
             return true;
         } else if (item.getItemId() == R.id.bluetooth) {
-            Intent intent = new Intent(this, BluetoothUserInterface.class);
+            Intent intent = new Intent(this, BluetoothUI.class);
             startActivity(intent);
             return true;
         } else if (item.getItemId() == R.id.configureStrings) {
@@ -217,23 +265,5 @@ public class MainActivity extends AppCompatActivity {
             dialog.show();
             return true;
         }
-// BT Dialog 
-//             case R.id.bluetooth:
-//                 bluetoothDevices = new CharSequence[]{"Device 1 ID", "Device 2 ID", "Device 3 ID"};
-//                 MaterialAlertDialogBuilder bluetooth_builder = new MaterialAlertDialogBuilder(this);
-//                 bluetooth_builder.setTitle("Connect to a Bluetooth Device");
-//                 bluetooth_builder.setSingleChoiceItems(bluetoothDevices, -1, new DialogInterface.OnClickListener() {
-//                     @Override
-//                     public void onClick(DialogInterface dialog, int which) {
-//                         dialog.dismiss();
-//                         Snackbar.make(getWindow().getDecorView().findViewById(R.id.mainContainer), "Bluetooth device " + bluetoothDevices[which] + " connected", Snackbar.LENGTH_LONG).show();
-//                     }
-//                 });
-//                 bluetooth_builder.show();
-//                 return true;
-
-        else
-            return super.onOptionsItemSelected(item);
-
-    }
+      
 }
