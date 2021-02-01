@@ -3,7 +3,6 @@ package com.jaygupta.mdpgroup10;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,13 +18,16 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.jaygupta.mdpgroup10.adapter.mazeRecViewAdapter;
-
-import java.util.ArrayList;
-
 import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionService;
 import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothUI;
 import com.jaygupta.mdpgroup10.utils.Constants;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +37,13 @@ public class MainActivity extends AppCompatActivity {
     mazeRecViewAdapter adapter;
     private String connStatus;
     Handler reconnectionHandler;
+    private Dialog dialog;
+    private TextInputLayout f1String;
+    private TextInputLayout f2String;
+    BluetoothConnectionService mBluetoothConnection;
+    byte[] byteArr;
+    Charset charset = StandardCharsets.UTF_8;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +70,16 @@ public class MainActivity extends AppCompatActivity {
         Util.initGoal(mazeCells);
         adapter.notifyDataSetChanged();
 
+        // Set Shared Preferences Strings Default
+        if(PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f1_key)) == "Not Found") {
+            PreferencesHelper.saveData(MainActivity.this, "F1 String", getResources().getString(R.string.f1_key));
+        }
 
-
+        if(PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f2_key)) == "Not Found") {
+            PreferencesHelper.saveData(MainActivity.this, "F2 String", getResources().getString(R.string.f2_key));
+        }
     }
+
 
     @Override
     protected void onResume() {
@@ -222,6 +238,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void setStrings(View view) {
+        f1String = (TextInputLayout) dialog.findViewById(R.id.stringF1);
+        f2String = (TextInputLayout) dialog.findViewById(R.id.stringF2);
+        PreferencesHelper.saveData(this, f1String.getEditText().getText().toString(), getResources().getString(R.string.f1_key));
+        PreferencesHelper.saveData(this, f2String.getEditText().getText().toString(), getResources().getString(R.string.f2_key));
+        Snackbar.make(view , "F1/F2 strings updated successfully", Snackbar.LENGTH_LONG).show();
+    }
+
+    public void sendStringF1(View view) {
+        byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f1_key)).getBytes(charset);
+        mBluetoothConnection.write(byteArr);
+        Snackbar.make(view, "String F1 Sent", Snackbar.LENGTH_LONG).show();
+    }
+
+    public void sendStringF2(View view) {
+        byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f2_key)).getBytes(charset);
+        mBluetoothConnection.write(byteArr);
+        Snackbar.make(view, "String F2 Sent", Snackbar.LENGTH_LONG).show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -235,8 +271,6 @@ public class MainActivity extends AppCompatActivity {
         item.setTitle(this.connStatus);
         return super.onPrepareOptionsMenu(menu);
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -254,14 +288,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (item.getItemId() == R.id.configureStrings) {
-            final Dialog dialog = new Dialog(this);
+            dialog = new Dialog(this);
             dialog.setContentView(R.layout.configure_strings);
             dialog.setTitle("Configure Strings");
-        /*TextView text = (TextView) dialog.findViewById(R.id.text2);
-        text.setText("Text view 1");
 
-        TextView text1 = (TextView) dialog.findViewById(R.id.text2);
-        text.setText("Text view 2");*/
+            f1String = (TextInputLayout) dialog.findViewById(R.id.stringF1);
+            f1String.getEditText().setText(PreferencesHelper.loadData(this, getResources().getString(R.string.f1_key)));
+
+            f2String = (TextInputLayout) dialog.findViewById(R.id.stringF2);
+            f2String.getEditText().setText(PreferencesHelper.loadData(this, getResources().getString(R.string.f2_key)));
+
             dialog.show();
             return true;
         } else

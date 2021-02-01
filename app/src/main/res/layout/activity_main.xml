@@ -139,7 +139,8 @@
                     android:id="@+id/f1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/f1">
+                    android:text="@string/f1"
+                    android:onClick="sendStringF1">
 
                 </Button>
 
@@ -149,9 +150,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-
                     android:layout_toEndOf="@id/f1"
-                    android:text="@string/f2">
+                    android:text="@string/f2"
+                    android:onClick="sendStringF2">
 
                 </Button>
 

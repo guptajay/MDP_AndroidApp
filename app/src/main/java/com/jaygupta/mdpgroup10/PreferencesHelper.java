@@ -6,19 +6,17 @@ import android.content.SharedPreferences;
 public class PreferencesHelper {
 
     private static final String SHARED_PREFS = "sharedPrefs";
-    private static final String TEXT = "ahhsaushhuuashu";
-    private static final String KEY = "myKey";
 
-    public static void saveData(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, context.MODE_PRIVATE);
+    public static void saveData(Context context, String f, String key) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(KEY, TEXT);
-        editor.apply();
+        editor.putString(key, f);
+        editor.commit();
     }
 
-    public static String loadData(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, context.MODE_PRIVATE);
-        String text = sharedPreferences.getString(KEY, "");
+    public static String loadData(Context context, String key) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        String text = sharedPreferences.getString(key, "Not Found");
         return text;
     }
 
