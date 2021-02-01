@@ -14,4 +14,8 @@
     <string name="f2">F2</string>
     <string name="manualControl">Manual</string>
     <string name="settingsBtn">Settings</string>
+    <string name="stringf1">String F1</string>
+    <string name="stringf2">String F2</string>
+    <string name="save">Save</string>
+    <string name="configureStrings">Configure F1/F2 Strings</string>
 </resources>

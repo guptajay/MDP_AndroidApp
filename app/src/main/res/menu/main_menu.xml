@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_information"
         app:showAsAction="ifRoom">
     </item>
+
+    <item android:id="@+id/configureStrings"
+        android:title="@string/configureStrings"
+        app:showAsAction="never">
+    </item>
 </menu>

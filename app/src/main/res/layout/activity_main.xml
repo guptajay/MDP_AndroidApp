@@ -115,7 +115,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
-            android:layout_toEndOf="@+id/drivingBtn">
+            android:layout_toEndOf="@+id/drivingBtn"
+            android:id="@+id/f1f2toggle">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/manulAutoControl"
@@ -124,7 +125,9 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
                 android:checked="true"
-                android:text="@string/manualControl"></androidx.appcompat.widget.SwitchCompat>
+                android:text="@string/manualControl">
+
+            </androidx.appcompat.widget.SwitchCompat>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -153,6 +156,7 @@
                 </Button>
 
             </RelativeLayout>
+
 
         </RelativeLayout>
 

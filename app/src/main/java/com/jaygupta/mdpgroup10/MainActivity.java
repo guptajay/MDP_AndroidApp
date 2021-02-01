@@ -1,5 +1,6 @@
 package com.jaygupta.mdpgroup10;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -203,6 +204,17 @@ public class MainActivity extends AppCompatActivity {
         } else if (item.getItemId() == R.id.bluetooth) {
             Intent intent = new Intent(this, BluetoothUserInterface.class);
             startActivity(intent);
+            return true;
+        } else if (item.getItemId() == R.id.configureStrings) {
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.configure_strings);
+            dialog.setTitle("Configure Strings");
+        /*TextView text = (TextView) dialog.findViewById(R.id.text2);
+        text.setText("Text view 1");
+
+        TextView text1 = (TextView) dialog.findViewById(R.id.text2);
+        text.setText("Text view 2");*/
+            dialog.show();
             return true;
         }
 // BT Dialog 
