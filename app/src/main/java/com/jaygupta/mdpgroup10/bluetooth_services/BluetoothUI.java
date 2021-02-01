@@ -181,7 +181,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         messageListItems.add("Sent: " + sentText);
         messageListAdapter.notifyDataSetChanged();
         messagesListView.setSelection(messageListAdapter.getCount()-1);
-
+        //
 
         if(!mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISABLED) &&
                 !mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISCONNECTED))
