@@ -299,4 +299,11 @@ public class BluetoothConnectionService extends Activity {
         return null;
     }
 
+
+    public boolean booleanBluetoothStatus(){
+        if(bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_CONNECTED))
+            return true;
+        return false;
+    }
+
 }

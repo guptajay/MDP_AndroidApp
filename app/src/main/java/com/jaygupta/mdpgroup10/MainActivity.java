@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialization of the Maze
         mazeRecView = findViewById(R.id.mazeRecView);
-
+        mBluetoothConnection=new BluetoothConnectionService(MainActivity.this);
         // mazeRecView.setHasFixedSize(true);
         mazeCells = new ArrayList<>();
         Util.initMaze(mazeCells);
@@ -248,14 +248,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendStringF1(View view) {
         byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f1_key)).getBytes(charset);
-        mBluetoothConnection.write(byteArr);
-        Snackbar.make(view, "String F1 Sent", Snackbar.LENGTH_LONG).show();
+        if(mBluetoothConnection.booleanBluetoothStatus()){
+            mBluetoothConnection.write(byteArr);
+            Snackbar.make(view, "String F1 Sent", Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
     public void sendStringF2(View view) {
         byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f2_key)).getBytes(charset);
-        mBluetoothConnection.write(byteArr);
-        Snackbar.make(view, "String F2 Sent", Snackbar.LENGTH_LONG).show();
+
+        if(mBluetoothConnection.booleanBluetoothStatus()){
+            mBluetoothConnection.write(byteArr);
+            Snackbar.make(view, "String F2 Sent", Snackbar.LENGTH_SHORT).show();
+        }
+        else
+            Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override

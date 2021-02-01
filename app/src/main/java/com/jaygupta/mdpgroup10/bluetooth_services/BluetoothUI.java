@@ -443,7 +443,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
                 Log.d(TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
                 Toast.makeText(BluetoothUI.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_LONG).show();
                 mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
-//                mBluetoothConnection.startAcceptThread();
+                mBluetoothConnection.startAcceptThread();
 
 
                 sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
