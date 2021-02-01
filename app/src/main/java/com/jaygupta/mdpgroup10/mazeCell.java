@@ -2,18 +2,18 @@ package com.jaygupta.mdpgroup10;
 
 public class mazeCell {
     private String cellName;
-    private String bgColor;
+    private int bgColor;
 
-    public mazeCell(String cellName, String bgColor) {
+    public mazeCell(String cellName, int bgColor) {
         this.cellName = cellName;
         this.bgColor = bgColor;
     }
 
-    public String getBgColor() {
+    public int getBgColor() {
         return bgColor;
     }
 
-    public void setBgColor(String bgColor) {
+    public void setBgColor(int bgColor) {
         this.bgColor = bgColor;
     }
 
