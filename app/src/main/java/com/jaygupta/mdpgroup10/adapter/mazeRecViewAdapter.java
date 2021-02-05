@@ -15,19 +15,27 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.jaygupta.mdpgroup10.R;
 import com.jaygupta.mdpgroup10.Util;
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionService;
 import com.jaygupta.mdpgroup10.mazeCell;
+import com.jaygupta.mdpgroup10.utils.Constants;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.ViewHolder> {
 
     private ArrayList<mazeCell> cells;
     private Context context;
+    private final Charset charset = StandardCharsets.UTF_8;
+    private byte[] byteArr;
     private CharSequence[] selectItem = new CharSequence[]{"Fastest-Path Waypoint", "Start Coordinate"};
+    private BluetoothConnectionService bluetoothConnection;
 
     public mazeRecViewAdapter(Context context, ArrayList<mazeCell> cells) {
         this.context = context;
         this.cells = cells;
+        bluetoothConnection = new BluetoothConnectionService(context);
     }
 
     @NonNull
@@ -74,37 +82,48 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                 dialog.dismiss();
                 switch (which) {
                     case 0:
-                        Util.setWayPoint(cells.get(pos).getCellName());
-                        Snackbar.make(v, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                        String s = context.getResources().getString(R.string.bluetooth_waypoint) + "(" + cells.get(pos).getCellName() + ")";
+                        byteArr = s.getBytes(charset);
+                        if (bluetoothConnection.booleanBluetoothStatus()) {
+                            bluetoothConnection.write(byteArr);
+                            Util.setWayPoint(cells.get(pos).getCellName());
+                            Snackbar.make(v, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                        } else
+                            Snackbar.make(v, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), cells);
+                        String s1 = context.getResources().getString(R.string.bluetooth_startpoint) + "(" + cells.get(pos).getCellName() + ")";
+                        byteArr = s1.getBytes(charset);
+                        if (bluetoothConnection.booleanBluetoothStatus()) {
+                            bluetoothConnection.write(byteArr);
+                            int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), cells);
+                            // Remove current position & add new position
+                            for (int i = 0; i <= 2; i++) {
+                                cells.get(currentPosition + i).setBgColor(R.color.maze);
+                                cells.get(pos + i).setBgColor(R.color.bot);
+                                notifyItemChanged(currentPosition + i);
+                                notifyItemChanged(pos + i);
+                            }
 
-                        // Remove current position & add new position
-                        for (int i = 0; i <= 2; i++) {
-                            cells.get(currentPosition + i).setBgColor(R.color.maze);
-                            cells.get(pos + i).setBgColor(R.color.bot);
-                            notifyItemChanged(currentPosition + i);
-                            notifyItemChanged(pos + i);
-                        }
+                            for (int i = 15; i >= 13; i--) {
+                                cells.get(currentPosition - i).setBgColor(R.color.maze);
+                                cells.get(pos - i).setBgColor(R.color.bot);
+                                notifyItemChanged(currentPosition - i);
+                                notifyItemChanged(pos - i);
+                            }
 
-                        for (int i = 15; i >= 13; i--) {
-                            cells.get(currentPosition - i).setBgColor(R.color.maze);
-                            cells.get(pos - i).setBgColor(R.color.bot);
-                            notifyItemChanged(currentPosition - i);
-                            notifyItemChanged(pos - i);
-                        }
-
-                        for (int i = 30; i >= 28; i--) {
-                            cells.get(currentPosition - i).setBgColor(R.color.maze);
-                            cells.get(pos - i).setBgColor(R.color.bot);
-                            notifyItemChanged(currentPosition - i);
-                            notifyItemChanged(pos - i);
-                        }
-                        Util.setStartPoint(cells.get(pos).getCellName());
-                        cells.get(pos - 29).setBgColor(R.color.heading);
-                        Util.setHeading("forward");
-                        Snackbar.make(v, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                            for (int i = 30; i >= 28; i--) {
+                                cells.get(currentPosition - i).setBgColor(R.color.maze);
+                                cells.get(pos - i).setBgColor(R.color.bot);
+                                notifyItemChanged(currentPosition - i);
+                                notifyItemChanged(pos - i);
+                            }
+                            Util.setStartPoint(cells.get(pos).getCellName());
+                            cells.get(pos - 29).setBgColor(R.color.heading);
+                            Util.setHeading("forward");
+                            Snackbar.make(v, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
+                        } else
+                            Snackbar.make(v, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
                         break;
                 }
             });
