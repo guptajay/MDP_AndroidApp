@@ -13,8 +13,5 @@ public final class Constants {
     public static final String BLUETOOTH_DISABLED="Disabled";
     public static final String BLUETOOTH_DISCONNECTED="Disconnected";
     public static final String BLUETOOTH_CONNECTED = "Connected";
-
     public static final String BLUETOOTH_NOT_CONNECTED = "Bluetooth not connected";
-
-
 }

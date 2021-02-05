@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     BluetoothConnectionService mBluetoothConnection;
     byte[] byteArr;
     Charset charset = StandardCharsets.UTF_8;
+    private RobotDrive drive;
 
 
     @Override
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialization of the Maze
         mazeRecView = findViewById(R.id.mazeRecView);
         mBluetoothConnection=new BluetoothConnectionService(MainActivity.this);
+
         // mazeRecView.setHasFixedSize(true);
         mazeCells = new ArrayList<>();
         Util.initMaze(mazeCells);
@@ -78,8 +80,9 @@ public class MainActivity extends AppCompatActivity {
         if(PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f2_key)) == "Not Found") {
             PreferencesHelper.saveData(MainActivity.this, "F2 String", getResources().getString(R.string.f2_key));
         }
-    }
 
+        drive = new RobotDrive(mazeCells, adapter, this, mBluetoothConnection);
+    }
 
     @Override
     protected void onResume() {
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         checkBluetoothStatus();
 
     }
+
 
     private void checkBluetoothStatus() {
         if(!BluetoothAdapter.getDefaultAdapter().isEnabled()){
@@ -105,137 +109,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void moveForward(View view) {
-        int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
-
-        if (Util.getHeading().equals("forward")) {
-            for (int i = 0; i <= 2; i++) {
-                mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
-                mazeCells.get(currentPosition - 45 + i).setBgColor(R.color.bot);
-                adapter.notifyItemChanged(currentPosition + i);
-                adapter.notifyItemChanged(currentPosition - 45 + i);
-            }
-
-            mazeCells.get(currentPosition - 44).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition - 29).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition - 44);
-            adapter.notifyItemChanged(currentPosition - 29);
-            Util.setStartPoint(mazeCells.get(currentPosition - 15).getCellName());
-
-        } else if (Util.getHeading().equals("left")) {
-
-            mazeCells.get(currentPosition + 2).setBgColor(R.color.maze);
-            mazeCells.get(currentPosition - 13).setBgColor(R.color.maze);
-            mazeCells.get(currentPosition - 28).setBgColor(R.color.maze);
-            adapter.notifyItemChanged(currentPosition + 2);
-            adapter.notifyItemChanged(currentPosition - 13);
-            adapter.notifyItemChanged(currentPosition - 28);
-
-            mazeCells.get(currentPosition - 16).setBgColor(R.color.heading);
-            adapter.notifyItemChanged(currentPosition - 16);
-
-            mazeCells.get(currentPosition - 1).setBgColor(R.color.bot);
-            mazeCells.get(currentPosition - 31).setBgColor(R.color.bot);
-            mazeCells.get(currentPosition - 15).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition - 1);
-            adapter.notifyItemChanged(currentPosition - 31);
-            adapter.notifyItemChanged(currentPosition - 15);
-
-            Util.setStartPoint(mazeCells.get(currentPosition - 1).getCellName());
-
-        } else if (Util.getHeading().equals("back")) {
-
-            for (int i = 30; i >= 28; i--) {
-                mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
-                mazeCells.get(currentPosition - 13 + i).setBgColor(R.color.bot);
-                adapter.notifyItemChanged(currentPosition - i);
-                adapter.notifyItemChanged(currentPosition - 13 + i);
-            }
-
-            mazeCells.get(currentPosition + 16).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition + 1).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition + 16);
-            adapter.notifyItemChanged(currentPosition + 1);
-            Util.setStartPoint(mazeCells.get(currentPosition + 15).getCellName());
-
-        } else if (Util.getHeading().equals("right")) {
-
-            mazeCells.get(currentPosition + 3).setBgColor(R.color.bot);
-            mazeCells.get(currentPosition - 13).setBgColor(R.color.bot);
-            mazeCells.get(currentPosition - 27).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition + 3);
-            adapter.notifyItemChanged(currentPosition - 13);
-            adapter.notifyItemChanged(currentPosition - 27);
-
-            mazeCells.get(currentPosition - 12).setBgColor(R.color.heading);
-            adapter.notifyItemChanged(currentPosition - 12);
-
-            mazeCells.get(currentPosition).setBgColor(R.color.maze);
-            mazeCells.get(currentPosition - 30).setBgColor(R.color.maze);
-            mazeCells.get(currentPosition - 15).setBgColor(R.color.maze);
-            adapter.notifyItemChanged(currentPosition);
-            adapter.notifyItemChanged(currentPosition - 30);
-            adapter.notifyItemChanged(currentPosition - 15);
-
-            Util.setStartPoint(mazeCells.get(currentPosition + 1).getCellName());
-        }
+        drive.moveBotForward(view);
     }
 
     public void moveLeft(View view) {
-        int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
-        if (Util.getHeading().equals("forward")) {
-            mazeCells.get(currentPosition - 15).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition - 29).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition - 15);
-            adapter.notifyItemChanged(currentPosition - 29);
-            Util.setHeading("left");
-        } else if (Util.getHeading().equals("left")) {
-            mazeCells.get(currentPosition + 1).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition - 15).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition + 1);
-            adapter.notifyItemChanged(currentPosition - 15);
-            Util.setHeading("back");
-        } else if (Util.getHeading().equals("back")) {
-            mazeCells.get(currentPosition - 13).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition + 1).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition + 1);
-            adapter.notifyItemChanged(currentPosition - 13);
-            Util.setHeading("right");
-        } else {
-            mazeCells.get(currentPosition - 29).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition - 13).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition - 29);
-            adapter.notifyItemChanged(currentPosition - 13);
-            Util.setHeading("forward");
-        }
+        drive.moveBotLeft(view);
     }
 
     public void moveRight(View view) {
-        int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
-        if (Util.getHeading().equals("forward")) {
-            mazeCells.get(currentPosition - 13).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition - 29).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition - 13);
-            adapter.notifyItemChanged(currentPosition - 29);
-            Util.setHeading("right");
-        } else if (Util.getHeading().equals("right")) {
-            mazeCells.get(currentPosition + 1).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition - 13).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition + 1);
-            adapter.notifyItemChanged(currentPosition - 13);
-            Util.setHeading("back");
-        } else if (Util.getHeading().equals("back")) {
-            mazeCells.get(currentPosition - 15).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition + 1).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition + 1);
-            adapter.notifyItemChanged(currentPosition - 15);
-            Util.setHeading("left");
-        } else {
-            mazeCells.get(currentPosition - 29).setBgColor(R.color.heading);
-            mazeCells.get(currentPosition - 15).setBgColor(R.color.bot);
-            adapter.notifyItemChanged(currentPosition - 29);
-            adapter.notifyItemChanged(currentPosition - 15);
-            Util.setHeading("forward");
-        }
+        drive.moveBotRight(view);
     }
 
     public void setStrings(View view) {
