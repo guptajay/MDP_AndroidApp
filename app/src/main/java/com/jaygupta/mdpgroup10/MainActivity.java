@@ -2,11 +2,14 @@ package com.jaygupta.mdpgroup10;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,8 +24,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
 import com.jaygupta.mdpgroup10.adapter.mazeRecViewAdapter;
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothChatUI;
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothChatService;
 import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionService;
-import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothUI;
+import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionUI;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
 import java.nio.charset.Charset;
@@ -53,9 +58,15 @@ public class MainActivity extends AppCompatActivity {
 
         Constants CONSTANTS;
 
+        startService(new Intent(MainActivity.this, BluetoothChatService.class));
+
         // Initialization of the Maze
         mazeRecView = findViewById(R.id.mazeRecView);
         mBluetoothConnection=new BluetoothConnectionService(MainActivity.this);
+
+        IntentFilter bluetoothStateChangeFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        registerReceiver(updateBluetoothStatus,bluetoothStateChangeFilter);
+
 
         // mazeRecView.setHasFixedSize(true);
         mazeCells = new ArrayList<>();
@@ -87,26 +98,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        checkBluetoothStatus();
-
-    }
-
-
-    private void checkBluetoothStatus() {
-        if(!BluetoothAdapter.getDefaultAdapter().isEnabled()){
-            connStatus= Constants.BLUETOOTH_DISABLED;
-        }
-        if(BluetoothAdapter.getDefaultAdapter().isEnabled()){
-            if(!BluetoothConnectionService.BluetoothConnectionStatus)
-                connStatus=Constants.BLUETOOTH_DISCONNECTED;
-            else{
-                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-                if (sharedPreferences.contains("connStatus"))
-                    connStatus = sharedPreferences.getString("connStatus", "");
-            }
-        }
+        connStatus = mBluetoothConnection.getBluetoothStatus();
         invalidateOptionsMenu();
     }
+
+    private BroadcastReceiver updateBluetoothStatus = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+           onResume();
+        }
+
+    };
+
 
     public void moveForward(View view) {
         drive.moveBotForward(view);
@@ -130,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendStringF1(View view) {
         byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f1_key)).getBytes(charset);
-        if(mBluetoothConnection.booleanBluetoothStatus()){
+        if(mBluetoothConnection.getBluetoothConnectionStatus()){
             mBluetoothConnection.write(byteArr);
             Snackbar.make(view, "String F1 Sent", Snackbar.LENGTH_SHORT).show();
         }
@@ -141,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
     public void sendStringF2(View view) {
         byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f2_key)).getBytes(charset);
 
-        if(mBluetoothConnection.booleanBluetoothStatus()){
+        if(mBluetoothConnection.getBluetoothConnectionStatus()){
             mBluetoothConnection.write(byteArr);
             Snackbar.make(view, "String F2 Sent", Snackbar.LENGTH_SHORT).show();
         }
@@ -175,9 +178,16 @@ public class MainActivity extends AppCompatActivity {
             builder.show();
             return true;
         } else if (item.getItemId() == R.id.bluetooth) {
-            Intent intent = new Intent(this, BluetoothUI.class);
+            Intent intent = new Intent(this, BluetoothConnectionUI.class);
             startActivity(intent);
             return true;
+
+        } else if (item.getItemId() == R.id.bluetooth_chat){
+            Intent intent = new Intent(this, BluetoothChatUI.class);
+            startActivity(intent);
+            return true;
+
+
         } else if (item.getItemId() == R.id.configureStrings) {
             dialog = new Dialog(this);
             dialog.setContentView(R.layout.configure_strings);

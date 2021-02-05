@@ -84,7 +84,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                     case 0:
                         String s = context.getResources().getString(R.string.bluetooth_waypoint) + "(" + cells.get(pos).getCellName() + ")";
                         byteArr = s.getBytes(charset);
-                        if (bluetoothConnection.booleanBluetoothStatus()) {
+                        if (bluetoothConnection.getBluetoothConnectionStatus()) {
                             bluetoothConnection.write(byteArr);
                             Util.setWayPoint(cells.get(pos).getCellName());
                             Snackbar.make(v, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
@@ -94,7 +94,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                     case 1:
                         String s1 = context.getResources().getString(R.string.bluetooth_startpoint) + "(" + cells.get(pos).getCellName() + ")";
                         byteArr = s1.getBytes(charset);
-                        if (bluetoothConnection.booleanBluetoothStatus()) {
+                        if (bluetoothConnection.getBluetoothConnectionStatus()) {
                             bluetoothConnection.write(byteArr);
                             int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), cells);
                             // Remove current position & add new position
