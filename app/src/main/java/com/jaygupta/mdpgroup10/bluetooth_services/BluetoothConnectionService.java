@@ -24,7 +24,7 @@ import java.nio.charset.Charset;
 import java.util.UUID;
 
 public class BluetoothConnectionService extends Activity {
-    BluetoothUI mBluetoothPopup;
+    BluetoothConnectionUI mBluetoothPopup;
     private static BluetoothConnectionService instance;
     private static final String TAG = "DebuggingTag";
 
@@ -130,7 +130,7 @@ public class BluetoothConnectionService extends Activity {
                 }
                 Log.d(TAG, "RUN: ConnectThread: could not connect to UUID."+ myUUID);
                 try {
-                    BluetoothUI mBluetoothPopUpActivity = (BluetoothUI) mContext;
+                    BluetoothConnectionUI mBluetoothPopUpActivity = (BluetoothConnectionUI) mContext;
                     mBluetoothPopUpActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -285,7 +285,7 @@ public class BluetoothConnectionService extends Activity {
         mConnectedThread.write(out);
     }
 
-    public String bluetoothStatus() {
+    public String getBluetoothStatus() {
         if(!BluetoothAdapter.getDefaultAdapter().isEnabled()){
             return Constants.BLUETOOTH_DISABLED;
         }
@@ -300,8 +300,8 @@ public class BluetoothConnectionService extends Activity {
     }
 
 
-    public boolean booleanBluetoothStatus(){
-        if(bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_CONNECTED))
+    public boolean getBluetoothConnectionStatus(){
+        if(getBluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_CONNECTED))
             return true;
         return false;
     }

@@ -6,171 +6,104 @@
     android:layout_height="match_parent">
 
 
-    <Button
-        android:id="@+id/searchBtn"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="116dp"
-        android:text="SEARCH"
-        app:layout_constraintEnd_toStartOf="@+id/connectBtn"
-        app:layout_constraintTop_toBottomOf="@+id/pairedDevicesListView" />
-
-    <ListView
-        android:id="@+id/messagesListView"
-        android:layout_width="396dp"
-        android:layout_height="225dp"
-        android:layout_marginStart="101dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="104dp"
-        android:layout_marginBottom="82dp"
-        android:background="@drawable/border"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messagesTextView"
-        />
-
-    <Button
-        android:id="@+id/connectBtn"
-        android:layout_width="150dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="100dp"
-        android:text="CONNECT"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/otherDevicesListView" />
-
-    <TextView
-        android:id="@+id/pairedDevicesTitleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="19dp"
-        android:text="Paired Devices"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/pairedDevicesListView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/messagesTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="264dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="49dp"
-        android:text="Messages"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/messagesListView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBtn" />
-
-    <TextView
-        android:id="@+id/otherDevicesTitleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="200dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="19dp"
-        android:listSelector="#bdb9b9"
-        android:text="Devices Found"
-        android:textAlignment="center"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/otherDevicesListView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/pairedDevicesTitleTextView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <ListView
-        android:id="@+id/pairedDevicesListView"
-        android:layout_width="278dp"
-        android:layout_height="231dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="19dp"
-        android:background="@drawable/border"
-        android:gravity="bottom"
-        android:listSelector="#bdb9b9"
-        android:scrollbars="vertical"
-        android:text="Paired Devices"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pairedDevicesTitleTextView">
-
-    </ListView>
-
-    <ListView
-        android:id="@+id/otherDevicesListView"
-        android:layout_width="278dp"
-        android:layout_height="231dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="10dp"
-        android:background="@drawable/border"
-        android:gravity="bottom"
-        android:scrollbars="vertical"
-        android:text="Other Devices"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pairedDevicesTitleTextView">
-
-    </ListView>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="235dp"
-        android:layout_height="83dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="30dp"
-        android:fitsSystemWindows="true"
-        android:hint="Send Text"
-        android:windowSoftInputMode="adjustResize"
-        app:endIconMode="clear_text"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/sentInput"
-            android:layout_width="359dp"
-            android:layout_height="84dp"
-            android:layout_marginBottom="120dp"
-            android:fitsSystemWindows="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.838"
-            app:layout_constraintStart_toStartOf="parent">
 
 
-        </com.google.android.material.textfield.TextInputEditText>
+        <TextView
+            android:id="@+id/pairedDevicesTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="265dp"
+            android:layout_marginTop="30dp"
+            android:text="Paired Devices"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    </com.google.android.material.textfield.TextInputLayout>
+        <ListView
+            android:id="@+id/pairedDevicesListView"
+            android:layout_width="400dp"
+            android:layout_height="271dp"
+            android:layout_marginStart="107dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/border"
+            android:gravity="bottom"
+            android:listSelector="#bdb9b9"
+            android:scrollbars="vertical"
+            android:text="Paired Devices"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pairedDevicesTitleTextView">
 
-    <Button
-        android:id="@+id/sendBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:layout_marginBottom="28dp"
-        android:layout_weight="1"
-        android:fitsSystemWindows="true"
-        android:text="Send"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textInputLayout" />
+        </ListView>
+
+        <TextView
+            android:id="@+id/otherDevicesTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="264dp"
+            android:layout_marginTop="30dp"
+            android:listSelector="#bdb9b9"
+            android:text="Devices Found"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pairedDevicesListView" />
+        <ListView
+            android:id="@+id/otherDevicesListView"
+            android:layout_width="400dp"
+            android:layout_height="271dp"
+            android:layout_marginStart="107dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/border"
+            android:gravity="bottom"
+            android:scrollbars="vertical"
+            android:text="Other Devices"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/otherDevicesTitleTextView">
+
+        </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/searchBtn"
+            android:layout_width="150dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="50dp"
+            android:text="SEARCH"
+          />
+
+        <Button
+            android:id="@+id/connectBtn"
+            android:layout_width="150dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="50dp"
+            android:text="CONNECT"
+         />
+
+
+    </LinearLayout>
+    </LinearLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

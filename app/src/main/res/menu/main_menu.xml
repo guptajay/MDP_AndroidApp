@@ -6,16 +6,24 @@
         app:showAsAction="always"
         >
     </item>
+
     <item android:id="@+id/bluetooth"
         android:title="@string/bluetooth"
         android:icon="@drawable/ic_bluetooth"
         app:showAsAction="always"
         >
     </item>
+
     <item android:id="@+id/information"
         android:title="@string/information"
         android:icon="@drawable/ic_information"
         app:showAsAction="always"
+        >
+    </item>
+
+    <item android:id="@+id/bluetooth_chat"
+        android:title="COMMS"
+        app:showAsAction="never"
         >
     </item>
 

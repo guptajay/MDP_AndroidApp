@@ -35,7 +35,7 @@ public class RobotDrive {
 
     public void moveBotForward(View view) {
         byteArr = context.getResources().getString(R.string.bluetooth_move_forward).getBytes(charset);
-        if (mBluetoothConnection.booleanBluetoothStatus()) {
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
@@ -118,7 +118,7 @@ public class RobotDrive {
     public void moveBotLeft(View view) {
 
         byteArr =context.getResources().getString(R.string.bluetooth_move_left).getBytes(charset);
-        if (mBluetoothConnection.booleanBluetoothStatus()) {
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
@@ -161,7 +161,7 @@ public class RobotDrive {
     public void moveBotRight(View view) {
 
         byteArr = context.getResources().getString(R.string.bluetooth_move_right).getBytes(charset);
-        if (mBluetoothConnection.booleanBluetoothStatus()) {
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();

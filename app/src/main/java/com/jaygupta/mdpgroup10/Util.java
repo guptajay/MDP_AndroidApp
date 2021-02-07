@@ -7,9 +7,21 @@ import java.util.ArrayList;
 
 public class Util {
 
+
+    static ArrayList<String> messageListItems=new ArrayList<String>();
+
     static String wayPoint = "Not Selected";
     static String startPoint = "0,0";
     static String heading = "forward";
+
+
+    public static ArrayList<String> getMessageListItems() {
+        return messageListItems;
+    }
+
+    public static void setMessageListItems(String message) {
+        messageListItems.add(message);
+    }
 
     public static void setWayPoint(String wP) {
         wayPoint = wP;
