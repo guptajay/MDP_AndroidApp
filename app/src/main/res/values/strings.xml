@@ -7,6 +7,7 @@
     <string name="status">Status</string>
     <string name="statusStop">Stopped</string>
     <string name="bluetooth">Bluetooth</string>
+    <string name="bluetooth_communication">Bluetooth Communication</string>
     <string name="forward">Forward</string>
     <string name="left">Left</string>
     <string name="right">Right</string>

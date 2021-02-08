@@ -53,7 +53,7 @@ public class BluetoothConnectionService extends Activity {
     }
 
     private class AcceptThread extends Thread{
-        private final BluetoothServerSocket ServerSocket;
+        BluetoothServerSocket ServerSocket;
 
         public AcceptThread() {
             BluetoothServerSocket bluetoothServerSocket = null;
@@ -69,6 +69,7 @@ public class BluetoothConnectionService extends Activity {
         public void run(){
             Log.d(TAG, "run: AcceptThread Running. ");
             BluetoothSocket socket =null;
+            if(ServerSocket != null)
             try {
                 Log.d(TAG, "run: RFCOM server socket start here...");
 

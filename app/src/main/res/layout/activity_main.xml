@@ -114,20 +114,35 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
             android:layout_toEndOf="@+id/drivingBtn"
-            android:id="@+id/f1f2toggle">
+            android:id="@+id/f1f2toggle"
+            android:layout_marginStart="10dp">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/manulAutoControl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
-                android:checked="true"
+                android:layout_marginStart="20dp"
+                android:checked="false"
                 android:text="@string/manualControl">
 
             </androidx.appcompat.widget.SwitchCompat>
+
+            <Button
+                android:id="@+id/refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/manulAutoControl"
+                android:onClick="moveRight"
+                android:background="@drawable/ic_refresh"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+             >
+
+            </Button>
 
             <RelativeLayout
                 android:layout_width="wrap_content"
