@@ -1,8 +1,5 @@
 package com.jaygupta.mdpgroup10.bluetooth_services;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +11,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.jaygupta.mdpgroup10.R;
 
@@ -37,6 +38,9 @@ public class BluetoothChatUI extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_chat);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Bluetooth Communication");
 
         bluetoothConnectionService = new BluetoothConnectionService(this);
         sendInput=findViewById(R.id.sendInput);
@@ -89,6 +93,7 @@ public class BluetoothChatUI extends AppCompatActivity {
             Log.d(TAG, "On BroadCastReceiver");
             if (intent != null && intent.getAction().equalsIgnoreCase("incomingMessage")) {
                 getMessageListItems();
+
                 messageListAdapter.notifyDataSetChanged();
                 messagesListView.setSelection(messageListAdapter.getCount()-1);
             }

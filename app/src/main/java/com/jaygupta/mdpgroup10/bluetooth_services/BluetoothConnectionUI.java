@@ -1,11 +1,6 @@
 package com.jaygupta.mdpgroup10.bluetooth_services;
 
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-
-
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -27,8 +22,10 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 
 import com.google.android.material.snackbar.Snackbar;
 import com.jaygupta.mdpgroup10.R;
@@ -47,8 +44,6 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
     public ArrayList<BluetoothDevice> pairedBtDevices;
     public DeviceListAdapter deviceListAdapter;
     public DeviceListAdapter pairedDeviceListAdapter;
-
-
 
     static Constants CONSTANTS;
     ListView otherDevicesListView;
@@ -97,6 +92,9 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_bluetooth_user_interface);
 
         initializeVariables();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Bluetooth Connection");
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 

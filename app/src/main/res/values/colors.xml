@@ -11,4 +11,5 @@
     <color name="maze">#FFCCCB</color>
     <color name="heading">#940008</color>
     <color name="goal">#A6F1A6</color>
+    <color name="mazeCellText">#676767</color>
 </resources>

@@ -12,6 +12,8 @@ import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import static com.jaygupta.mdpgroup10.Util.setManualListItems;
 import static com.jaygupta.mdpgroup10.Util.setMessageListItems;
 
 
@@ -41,8 +43,6 @@ public class BluetoothChatService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
     }
-
-
     public BroadcastReceiver messageReceived = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -50,10 +50,34 @@ public class BluetoothChatService extends Service {
             if (intent != null && intent.getAction().equalsIgnoreCase("incomingMessage")) {
                 String receivedMessage = intent.getStringExtra("receivedMessage");
                 setMessageListItems("Received: " + receivedMessage);
+                setManualListItems("Received: " + receivedMessage);
                 Log.d(TAG,"Message received " + receivedMessage);
+
+
+                //send broadcast to main Activity for updating status
+                messageDelivery(receivedMessage);
+
             }
         }
     };
+
+    private void messageDelivery(String receivedMessage) {
+
+        if(receivedMessage.contains("status")){
+            Intent robotStatusUpdateIntent = new Intent("robotStatusUpdate");
+            robotStatusUpdateIntent.putExtra("receivedMessage", receivedMessage);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(robotStatusUpdateIntent);
+        } else if(receivedMessage.contains("obs")){
+            Intent mazeUpdateIntent = new Intent("mazeUpdate");
+            mazeUpdateIntent.putExtra("receivedMessage", receivedMessage);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mazeUpdateIntent);
+        } else if(receivedMessage.contains("mov")){
+            Intent botMoveIntent = new Intent("botUpdate");
+            botMoveIntent.putExtra("receivedMessage", receivedMessage);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(botMoveIntent);
+        }
+
+    }
 
     @Override
     public IBinder onBind(Intent intent) {

@@ -49,8 +49,9 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //String s = String.valueOf(position);
         //holder.mazeCell.setText(s);
-        holder.mazeCell.setText(cells.get(position).getCellName());
+        holder.mazeCell.setText(cells.get(position).getDisplayName());
         holder.mazeCellItem.setBackgroundResource(cells.get(position).getBgColor());
+        holder.mazeCell.setTextColor(context.getResources().getColor(cells.get(position).getTextColor()));
     }
 
     @Override
@@ -82,7 +83,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                 dialog.dismiss();
                 switch (which) {
                     case 0:
-                        String s = context.getResources().getString(R.string.bluetooth_waypoint) + "(" + cells.get(pos).getCellName() + ")";
+                        String s = context.getResources().getString(R.string.bluetooth_waypoint) + "FPW (" + cells.get(pos).getCellName() + ")";
                         byteArr = s.getBytes(charset);
                         if (bluetoothConnection.getBluetoothConnectionStatus()) {
                             bluetoothConnection.write(byteArr);
@@ -92,7 +93,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                             Snackbar.make(v, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
                         break;
                     case 1:
-                        String s1 = context.getResources().getString(R.string.bluetooth_startpoint) + "(" + cells.get(pos).getCellName() + ")";
+                        String s1 = context.getResources().getString(R.string.bluetooth_startpoint) + "SP (" + cells.get(pos).getCellName() + ")";
                         byteArr = s1.getBytes(charset);
                         if (bluetoothConnection.getBluetoothConnectionStatus()) {
                             bluetoothConnection.write(byteArr);
