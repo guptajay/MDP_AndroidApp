@@ -28,7 +28,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.jaygupta.mdpgroup10.MainActivity;
 import com.jaygupta.mdpgroup10.R;
+import com.jaygupta.mdpgroup10.Util;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
 import java.util.ArrayList;
@@ -73,13 +75,13 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
             try {
                 if (BluetoothConnectionService.BluetoothConnectionStatus == false) {
                     startBTConnection(mBTDevice, btUUID);
-                    Toast.makeText(BluetoothConnectionUI.this, "Reconnection Success", Toast.LENGTH_SHORT).show();
-
+                    //Toast.makeText(BluetoothConnectionUI.this,"Reconnection Success.", Toast.LENGTH_LONG).show();
                 }
                 reconnectionHandler.removeCallbacks(reconnectionRunnable);
                 retryConnection = false;
+                alertDialog.dismiss();
             } catch (Exception e) {
-                Toast.makeText(BluetoothConnectionUI.this, "Failed to reconnect, trying in 5 second", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BluetoothConnectionUI.this,"Failed to reconnect, trying in 5 seconds.", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -149,14 +151,7 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
 
     }
 
-
-
-
-
-
     protected void initializeVariables(){
-
-
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         otherDevicesListView = (ListView) findViewById(R.id.otherDevicesListView);
@@ -373,6 +368,8 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
                 connStatus="Connected";
                 editor.commit();
             }
+
+
             else if(status.equals("disconnected") && retryConnection == false){
                 Log.d(TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
                 Snackbar.make(findViewById(android.R.id.content),"Disconnected from "+mDevice.getName(), Snackbar.LENGTH_SHORT).show();
@@ -392,6 +389,7 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
                 }
                 retryConnection = true;
                 reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
+
 
             }
             invalidateOptionsMenu();

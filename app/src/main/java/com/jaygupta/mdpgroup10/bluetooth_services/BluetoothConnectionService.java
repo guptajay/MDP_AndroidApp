@@ -130,17 +130,17 @@ public class BluetoothConnectionService extends Activity {
                     Log.e(TAG, "RUN: ConnectThread: Unable to close connection in socket."+ e1.getMessage());
                 }
                 Log.d(TAG, "RUN: ConnectThread: could not connect to UUID."+ myUUID);
-                try {
-                    BluetoothConnectionUI mBluetoothPopUpActivity = (BluetoothConnectionUI) mContext;
-                    mBluetoothPopUpActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(mContext, "Failed to connect to the Device.", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } catch (Exception z) {
-                    z.printStackTrace();
-                }
+//                try {
+//                    BluetoothConnectionUI mBluetoothPopUpActivity = (BluetoothConnectionUI) mContext;
+//                    mBluetoothPopUpActivity.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Toast.makeText(mContext, "Failed to connect to the Device.", Toast.LENGTH_LONG).show();
+//                        }
+//                    });
+//                } catch (Exception z) {
+//                    z.printStackTrace();
+//                }
 
             }
             try {

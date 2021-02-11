@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainContainer"
     android:layout_width="match_parent"
@@ -77,6 +78,16 @@
 
             </Button>
 
+            <ImageButton
+                android:id="@+id/micBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:background="@android:color/transparent"
+                android:onClick="voiceCommand"
+                android:layout_toEndOf="@+id/moveForwardBtn"
+                android:layout_marginLeft="20dp"
+                app:srcCompat="@drawable/ic_mic" />
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,6 +128,7 @@
             android:layout_toEndOf="@+id/drivingBtn"
             android:id="@+id/f1f2toggle"
             android:layout_marginStart="10dp">
+
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/manulAutoControl"
