@@ -71,6 +71,7 @@
             android:background="@drawable/border"
             android:gravity="bottom"
             android:scrollbars="vertical"
+            android:listSelector="#bdb9b9"
             android:text="Other Devices"
             android:textColor="@color/black"
             android:textSize="14sp"

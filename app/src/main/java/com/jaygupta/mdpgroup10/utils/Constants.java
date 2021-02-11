@@ -23,9 +23,9 @@ public final class Constants {
 
 
     public static final String VOICE_MOV_STATUS = "Moving ";
-    public static final String VOICE_FORWARD_STATUS = "Forward";
-    public static final String VOICE_RIGHT_STATUS = "Right";
-    public static final String VOICE_LEFT_STATUS = "Left";
+    public static final String VOICE_FORWARD_STATUS =  VOICE_MOV_STATUS + "Forward";
+    public static final String VOICE_RIGHT_STATUS =  VOICE_MOV_STATUS + "Right";
+    public static final String VOICE_LEFT_STATUS = VOICE_MOV_STATUS + "Left";
     public static final String VOICE_ERROR_STATUS = "Invalid Command";
 
 

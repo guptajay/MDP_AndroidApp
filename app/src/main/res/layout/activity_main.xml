@@ -78,6 +78,16 @@
 
             </Button>
 
+            <ImageButton
+                android:id="@+id/micBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:background="@android:color/transparent"
+                android:onClick="voiceCommand"
+                android:layout_toEndOf="@+id/moveForwardBtn"
+                android:layout_marginLeft="20dp"
+                app:srcCompat="@drawable/ic_mic" />
+
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -119,13 +129,6 @@
             android:id="@+id/f1f2toggle"
             android:layout_marginStart="10dp">
 
-            <ImageButton
-                android:id="@+id/micBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_mic"
-                android:onClick="voiceCommand"/>
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/manulAutoControl"
@@ -133,7 +136,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:layout_marginStart="20dp"
-                android:layout_toEndOf="@+id/micBtn"
                 android:checked="false"
                 android:text="@string/manualControl">
 

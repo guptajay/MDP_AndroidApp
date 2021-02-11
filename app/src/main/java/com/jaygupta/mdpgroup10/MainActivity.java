@@ -82,6 +82,9 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter bluetoothStateChangeFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(updateBluetoothStatus,bluetoothStateChangeFilter);
 
+        IntentFilter bluetoothConnectionChangeFilter = new IntentFilter("ConnectionStatus");
+        LocalBroadcastManager.getInstance(this).registerReceiver(updateBluetoothStatus, bluetoothConnectionChangeFilter);
+
 
         LocalBroadcastManager.getInstance(this).registerReceiver(robotStatusUpdate, new IntentFilter("robotStatusUpdate"));
         LocalBroadcastManager.getInstance(this).registerReceiver(mazeUpdate, new IntentFilter("mazeUpdate"));
@@ -166,20 +169,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private BroadcastReceiver updateBluetoothStatus = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-           onResume();
-        }
-
-    };
+        @Override public void onReceive(Context context, Intent intent) {onResume();}};
 
 
     public void voiceCommand(View view){
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, new Locale("English (US)", "en_US"));
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Provide instructions");
-        try{ startActivityForResult(intent,Constants.REQUEST_CODE_SPEECH_INPUT);} catch (Exception e) {Log.d(TAG,e.getMessage());}
+
+        if(connStatus.equalsIgnoreCase(Constants.BLUETOOTH_CONNECTED)){
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, new Locale("English (US)", "en_US"));
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Provide instructions");
+            try{ startActivityForResult(intent,Constants.REQUEST_CODE_SPEECH_INPUT);} catch (Exception e) {Log.d(TAG,e.getMessage());}
+        }
+
+        else{
+            Snackbar.make(view,Constants.BLUETOOTH_NOT_CONNECTED,Snackbar.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
