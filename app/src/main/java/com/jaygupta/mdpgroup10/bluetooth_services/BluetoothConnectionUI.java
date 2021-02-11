@@ -149,14 +149,7 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
 
     }
 
-
-
-
-
-
     protected void initializeVariables(){
-
-
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         otherDevicesListView = (ListView) findViewById(R.id.otherDevicesListView);

@@ -8,11 +8,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognizerIntent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,9 +35,11 @@ import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionService;
 import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionUI;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     private SwitchCompat manualSwitch;
     private Button refresh;
     private Button moveForward, moveRight, moveLeft;
+    private ImageButton micBtn;
+
+    private final String TAG = "Main Activity";
 
 
     @Override
@@ -107,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         moveForward = findViewById(R.id.moveForwardBtn);
         moveLeft = findViewById(R.id.moveLeftBtn);
         moveRight = findViewById(R.id.moveRightBtn);
+        micBtn=findViewById(R.id.micBtn);
 
         if(!manualSwitch.isChecked()) {
             refresh.setEnabled(false);
@@ -163,6 +173,52 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+
+    public void voiceCommand(View view){
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, new Locale("English (US)", "en_US"));
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Provide instructions");
+        try{ startActivityForResult(intent,Constants.REQUEST_CODE_SPEECH_INPUT);} catch (Exception e) {Log.d(TAG,e.getMessage());}
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_SPEECH_INPUT:
+                if (resultCode == RESULT_OK && data != null) {
+                    ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                     parseVoiceInput(result.get(0));}
+                break; }
+    }
+
+    private void parseVoiceInput(String string) {
+        string=string.toLowerCase();
+        String status;
+        if(string.contains(Constants.VOICE_MOV)){
+            if (string.contains(Constants.VOICE_FORWARD)){
+                moveForward.performClick();
+                status=Constants.VOICE_FORWARD_STATUS;
+            }
+            else if (string.contains(Constants.VOICE_RIGHT)){
+                moveRight.performClick();
+                status=Constants.VOICE_RIGHT_STATUS;
+            }
+            else if (string.contains(Constants.VOICE_LEFT)){
+                moveLeft.performClick();
+                status=Constants.VOICE_LEFT_STATUS;
+            }
+
+            else
+                status=Constants.VOICE_ERROR_STATUS;
+
+        }
+        else
+            status=Constants.VOICE_ERROR_STATUS;
+
+        Util.setStatus(MainActivity.this,status);
+    }
 
     public void moveForward(View view) {
         drive.moveBotForward(view);
