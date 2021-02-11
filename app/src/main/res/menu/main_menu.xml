@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/bluetooth_status"
+    <item
+        android:id="@+id/bluetooth_status"
         android:title="Not Connected"
-        app:showAsAction="always"
-        >
-    </item>
-    <item android:id="@+id/bluetooth"
-        android:title="@string/bluetooth"
-        android:icon="@drawable/ic_bluetooth"
-        app:showAsAction="always"
-        >
-    </item>
-    <item android:id="@+id/information"
-        android:title="@string/information"
-        android:icon="@drawable/ic_information"
-        app:showAsAction="always"
-        >
+        app:showAsAction="always">
     </item>
 
-    <item android:id="@+id/configureStrings"
-        android:title="@string/configureStrings"
-        app:showAsAction="never">
-    </item>
+    <group android:id="@+id/main_menu">
+
+        <item
+            android:id="@+id/bluetooth"
+            android:icon="@drawable/ic_bluetooth"
+            android:title="@string/bluetooth"
+            app:showAsAction="ifRoom">
+        </item>
+
+        <item
+            android:id="@+id/information"
+            android:icon="@drawable/ic_information"
+            android:title="@string/information"
+            app:showAsAction="always">
+        </item>
+
+        <item
+            android:id="@+id/bluetooth_chat"
+            android:title="@string/bluetooth_communication"
+            app:showAsAction="never">
+        </item>
+
+        <item
+            android:id="@+id/configureStrings"
+            android:title="@string/configureStrings"
+            app:showAsAction="never">
+        </item>
+
+    </group>
 </menu>

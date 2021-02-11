@@ -1,11 +1,6 @@
 package com.jaygupta.mdpgroup10.bluetooth_services;
 
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
-
-
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -23,26 +18,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 
 import com.google.android.material.snackbar.Snackbar;
 import com.jaygupta.mdpgroup10.R;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
 
-public class BluetoothUI extends AppCompatActivity implements View.OnClickListener {
+public class BluetoothConnectionUI extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Bluetooth UI Activity";
     private String connStatus;
     BluetoothAdapter bluetoothAdapter;
@@ -52,20 +45,13 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
     public DeviceListAdapter deviceListAdapter;
     public DeviceListAdapter pairedDeviceListAdapter;
 
-
-
     static Constants CONSTANTS;
     ListView otherDevicesListView;
     ListView pairedDevicesListView;
-    ListView messagesListView;
     Button connectBtn;
     Button searchBtn;
-    Button sendBtn;
 
-    EditText sendInput;
 
-    ArrayList<String> messageListItems=new ArrayList<String>();
-    ArrayAdapter<String> messageListAdapter;
 
     AlertDialog alertDialog;
 
@@ -87,28 +73,17 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
             try {
                 if (BluetoothConnectionService.BluetoothConnectionStatus == false) {
                     startBTConnection(mBTDevice, btUUID);
-                    Toast.makeText(BluetoothUI.this, "Reconnection Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BluetoothConnectionUI.this, "Reconnection Success", Toast.LENGTH_SHORT).show();
 
                 }
                 reconnectionHandler.removeCallbacks(reconnectionRunnable);
                 retryConnection = false;
             } catch (Exception e) {
-                Toast.makeText(BluetoothUI.this, "Failed to reconnect, trying in 5 second", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BluetoothConnectionUI.this, "Failed to reconnect, trying in 5 second", Toast.LENGTH_SHORT).show();
             }
         }
     };
 
-    public BroadcastReceiver messageReceived = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent != null) {
-                String receivedMessage = intent.getStringExtra("receivedMessage");
-                messageListItems.add( "Received: " + receivedMessage);
-                messageListAdapter.notifyDataSetChanged();
-                messagesListView.setSelection(messageListAdapter.getCount()-1);
-            }
-        }
-    };
 
 
     @Override
@@ -117,12 +92,14 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_bluetooth_user_interface);
 
         initializeVariables();
-        checkBluetoothStatus();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Bluetooth Connection");
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         IntentFilter bluetoothStateChangeFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(checkBluetoothStatus,bluetoothStateChangeFilter);
+        registerReceiver(updateBluetoothStatus,bluetoothStateChangeFilter);
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         registerReceiver(mBroadcastReceiver4, filter);
@@ -131,7 +108,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
 
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceived, new IntentFilter("incomingMessage"));
+       // LocalBroadcastManager.getInstance(this).registerReceiver(messageReceived, new IntentFilter("incomingMessage"));
 
 
 
@@ -165,56 +142,37 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
             Log.d(TAG, "onItemClick: DEVICE NAME: " + deviceName);
             Log.d(TAG, "onItemClick: DEVICE ADDRESS: " + deviceAddress);
 
-            mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
+            mBluetoothConnection = new BluetoothConnectionService(BluetoothConnectionUI.this);
             mBTDevice = pairedBtDevices.get(i);
         });
 
-        messageListItems=new ArrayList<String>();
-        messageListAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, messageListItems);
-        messagesListView.setAdapter(messageListAdapter);
 
     }
 
-    private void sendData() {
 
-        String sentText=sendInput.getText().toString();
-        messageListItems.add("Sent: " + sentText);
-        messageListAdapter.notifyDataSetChanged();
-        messagesListView.setSelection(messageListAdapter.getCount()-1);
-        //
-
-        if(!mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISABLED) &&
-                !mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISCONNECTED))
-            mBluetoothConnection.write(sentText.getBytes(StandardCharsets.UTF_8));
-
-    }
 
 
 
 
     protected void initializeVariables(){
-        //messageReceivedTextView=findViewById(R.id.messageReceivedTextView);
-        sendInput=findViewById(R.id.sentInput);
+
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         otherDevicesListView = (ListView) findViewById(R.id.otherDevicesListView);
         pairedDevicesListView = (ListView) findViewById(R.id.pairedDevicesListView);
-        messagesListView = (ListView) findViewById(R.id.messagesListView);
+
 
         newBtDevices = new ArrayList<>();
         pairedBtDevices = new ArrayList<>();
 
         connectBtn = (Button) findViewById(R.id.connectBtn);
         searchBtn=(Button) findViewById(R.id.searchBtn);
-        sendBtn=(Button)findViewById(R.id.sendBtn);
 
         connectBtn.setOnClickListener(this);
         searchBtn.setOnClickListener(this);
-        sendBtn.setOnClickListener(this);
 
-
-        mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
+        mBluetoothConnection = new BluetoothConnectionService(BluetoothConnectionUI.this);
 
          alertDialog = new AlertDialog.Builder(this).create();
          alertDialog.setTitle("Connection interrupted");
@@ -227,51 +185,26 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
                  });
     }
 
+
+
+
     @Override
-    protected void onStart() {
-        super.onStart();
-
-
-        if(mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISABLED)){
-            Log.d(TAG,"Bluetooth Disabled");
-            connStatus=CONSTANTS.BLUETOOTH_DISABLED;
-        }
-
-        else if(mBluetoothConnection.bluetoothStatus().equalsIgnoreCase(Constants.BLUETOOTH_DISCONNECTED)){
-            Log.d(TAG,"Bluetooth Disconnected");
-            connStatus=CONSTANTS.BLUETOOTH_DISCONNECTED;
-        }
-
-        else{
-            SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-            if (sharedPreferences.contains("connStatus"))
-                connStatus = sharedPreferences.getString("connStatus", "");
-        }
-
+    protected void onResume() {
+        super.onResume();
+        connStatus = mBluetoothConnection.getBluetoothStatus();
         invalidateOptionsMenu();
     }
 
-    private BroadcastReceiver checkBluetoothStatus = new BroadcastReceiver() {
+
+
+    private BroadcastReceiver updateBluetoothStatus = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG,"Bluetooth state changed");
-            onStart();
+            onResume();
         }
 
     };
-
-    private void checkBluetoothStatus() {
-//        if(!mBluetoothAdapter.isEnabled()){
-//            IntentFilter stateIntentFilter = new IntentFilter(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
-//            registerReceiver(checkBluetoothStatus, stateIntentFilter);
-//        }
-
-
-        sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
-        if (sharedPreferences.contains("connStatus"))
-            connStatus = sharedPreferences.getString("connStatus", "");
-        invalidateOptionsMenu();
-    }
 
 
     public void connectBluetooth(){
@@ -406,7 +339,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
                 BluetoothDevice mDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if(mDevice.getBondState() == BluetoothDevice.BOND_BONDED){
                     Log.d(TAG, "BOND_BONDED.");
-                    Toast.makeText(BluetoothUI.this, "Successfully paired with " + mDevice.getName(), Toast.LENGTH_SHORT).show();
+                    Snackbar.make(findViewById(android.R.id.content),"Successfully paired with " + mDevice.getName(), Snackbar.LENGTH_SHORT).show();
                     mBTDevice = mDevice;
                 }
                 if(mDevice.getBondState() == BluetoothDevice.BOND_BONDING){
@@ -435,16 +368,16 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
                 }
 
                 Log.d(TAG, "mBroadcastReceiver5: Device now connected to "+mDevice.getName());
-                Toast.makeText(BluetoothUI.this, "Device now connected to "+mDevice.getName(), Toast.LENGTH_LONG).show();
+                Snackbar.make(findViewById(android.R.id.content),"Device now connected to "+mDevice.getName(), Snackbar.LENGTH_SHORT).show();
                 editor.putString("connStatus", "Connected to " + mDevice.getName());
-                connStatus="Connected to " + mDevice.getName();
+                connStatus="Connected";
+                editor.commit();
             }
             else if(status.equals("disconnected") && retryConnection == false){
                 Log.d(TAG, "mBroadcastReceiver5: Disconnected from "+mDevice.getName());
-                Toast.makeText(BluetoothUI.this, "Disconnected from "+mDevice.getName(), Toast.LENGTH_LONG).show();
-                mBluetoothConnection = new BluetoothConnectionService(BluetoothUI.this);
+                Snackbar.make(findViewById(android.R.id.content),"Disconnected from "+mDevice.getName(), Snackbar.LENGTH_SHORT).show();
+                mBluetoothConnection = new BluetoothConnectionService(BluetoothConnectionUI.this);
                 mBluetoothConnection.startAcceptThread();
-
 
                 sharedPreferences = getApplicationContext().getSharedPreferences("Shared Preferences", Context.MODE_PRIVATE);
                 editor = sharedPreferences.edit();
@@ -461,7 +394,6 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
                 reconnectionHandler.postDelayed(reconnectionRunnable, 5000);
 
             }
-            editor.commit();
             invalidateOptionsMenu();
         }
     };
@@ -495,7 +427,7 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
         Log.d(TAG, "onPause: called");
         super.onPause();
         try {
-            unregisterReceiver(checkBluetoothStatus);
+            unregisterReceiver(updateBluetoothStatus);
             unregisterReceiver(mBroadcastReceiver2);
             unregisterReceiver(foundDeviceBroadcastReceiver);
             unregisterReceiver(mBroadcastReceiver4);
@@ -523,10 +455,6 @@ public class BluetoothUI extends AppCompatActivity implements View.OnClickListen
                 break;
             case R.id.searchBtn:
                 searchDevices();
-                break;
-
-            case R.id.sendBtn:
-                sendData();
                 break;
 
         }
