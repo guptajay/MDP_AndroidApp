@@ -13,12 +13,7 @@ import android.widget.ListView;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
+import com.jaygupta.mdpgroup10.Util;
 
 import static com.jaygupta.mdpgroup10.Util.setManualListItems;
 import static com.jaygupta.mdpgroup10.Util.setMessageListItems;
@@ -68,31 +63,6 @@ public class BluetoothChatService extends Service {
         }
     };
 
-    private ArrayList<String> gridTest(String message) {
-        Log.d(TAG, "receivedMessage: message --- " + message);
-        ArrayList<String> result = new ArrayList<>();
-        if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
-            String amdString = message.substring(11, message.length() - 2);
-            String binaryString = new BigInteger(amdString, 16).toString(2);
-            int col=15;
-            int row=0;
-            binaryString = new StringBuffer(binaryString).reverse().toString();
-            for(char c: binaryString.toCharArray()){
-                if(col == 0){
-                    col=15;
-                    row++;
-                }
-                if(c == '1'){
-                    String  string = "obs (" + String.valueOf(col-1) + "," + String.valueOf(row) + ")";
-                    result.add(string);
-                }
-                col--;
-            }
-        }
-        return result;
-    }
-
-
     private void messageDelivery(String receivedMessage) {
 
         if(receivedMessage.contains("status")){
@@ -107,13 +77,15 @@ public class BluetoothChatService extends Service {
             Intent botMoveIntent = new Intent("botUpdate");
             botMoveIntent.putExtra("receivedMessage", receivedMessage);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(botMoveIntent);
-        }
-        else if(receivedMessage.contains("grid")){
-            ArrayList<String> arrayList=gridTest(receivedMessage);
+        } else if(receivedMessage.contains("grid")){
+            String resultString = Util.gridTest(receivedMessage);
             Intent gridObstacles = new Intent("gridObstacles");
-            gridObstacles.putExtra("receivedMessage", receivedMessage);
+            gridObstacles.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gridObstacles);
-            Log.d(TAG,"MAP: "+arrayList.toString());
+        } else if(receivedMessage.contains("robotPosition")) {
+            Intent changeBotPosition = new Intent("changeBotPosition");
+            changeBotPosition.putExtra("receivedMessage", receivedMessage);
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(changeBotPosition);
         }
 
     }
