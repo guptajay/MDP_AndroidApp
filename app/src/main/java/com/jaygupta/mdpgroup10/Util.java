@@ -3,6 +3,7 @@ package com.jaygupta.mdpgroup10;
 import android.app.Activity;
 import android.widget.TextView;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Util {
@@ -10,6 +11,7 @@ public class Util {
 
     static ArrayList<String> messageListItems=new ArrayList<String>();
     static ArrayList<String> manualListItems=new ArrayList<String>();
+    static ArrayList<String> obstacleList = new ArrayList<String>();
 
     static String wayPoint = "Not Selected";
     static String startPoint = "0,0";
@@ -110,5 +112,42 @@ public class Util {
         mazeCells.get(pos).setBgColor(R.color.black);
         mazeCells.get(pos).setTextColor(R.color.white);
         return pos;
+    }
+
+    public static int removeObstacle(ArrayList<mazeCell> mazeCells, String position) {
+        int pos = getPositionFromCoordinate(position, mazeCells);
+        mazeCells.get(pos).setDisplayName(position);
+        mazeCells.get(pos).setBgColor(R.color.maze);
+        mazeCells.get(pos).setTextColor(R.color.mazeCellText);
+        return pos;
+    }
+
+    public static String gridTest(String message) {
+        // Log.d(TAG, "receivedMessage: message --- " + message);
+        ArrayList<String> result = new ArrayList<>();
+        if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
+            String amdString = message.substring(11, message.length() - 2);
+            String binaryString = new BigInteger(amdString, 16).toString(2);
+            int col=15;
+            int row=0;
+            binaryString = new StringBuffer(binaryString).reverse().toString();
+            for(char c: binaryString.toCharArray()){
+                if(col == 0){
+                    col=15;
+                    row++;
+                }
+                if(c == '1'){
+                    String  string = "obs (" + String.valueOf(col-1) + "," + String.valueOf(row) + ")";
+                    result.add(string);
+                }
+                col--;
+            }
+        }
+        String resultString = "";
+        for (String s : result)
+        {
+            resultString += s + "\t";
+        }
+        return resultString;
     }
 }

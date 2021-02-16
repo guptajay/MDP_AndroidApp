@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,7 +33,6 @@ import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothChatUI;
 import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionService;
 import com.jaygupta.mdpgroup10.bluetooth_services.BluetoothConnectionUI;
 import com.jaygupta.mdpgroup10.utils.Constants;
-
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -77,10 +75,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialization of the Maze
         mazeRecView = findViewById(R.id.mazeRecView);
-        mBluetoothConnection=new BluetoothConnectionService(MainActivity.this);
+        mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
 
         IntentFilter bluetoothStateChangeFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(updateBluetoothStatus,bluetoothStateChangeFilter);
+        registerReceiver(updateBluetoothStatus, bluetoothStateChangeFilter);
 
         IntentFilter bluetoothConnectionChangeFilter = new IntentFilter("ConnectionStatus");
         LocalBroadcastManager.getInstance(this).registerReceiver(updateBluetoothStatus, bluetoothConnectionChangeFilter);
@@ -89,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(robotStatusUpdate, new IntentFilter("robotStatusUpdate"));
         LocalBroadcastManager.getInstance(this).registerReceiver(mazeUpdate, new IntentFilter("mazeUpdate"));
         LocalBroadcastManager.getInstance(this).registerReceiver(botUpdate, new IntentFilter("botUpdate"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(gridObstacles, new IntentFilter("gridObstacles"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(changeBotPosition, new IntentFilter("changeBotPosition"));
 
         // mazeRecView.setHasFixedSize(true);
         mazeCells = new ArrayList<>();
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         mazeRecView.setAdapter(adapter);
         mazeRecView.setLayoutManager(new GridLayoutManager(this, 15));
+        mazeRecView.setItemAnimator(null);
 
         // Initialization of the Bot
         Util.initBot(mazeCells);
@@ -106,11 +107,11 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
 
         // Set Shared Preferences Strings Default
-        if(PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f1_key)) == "Not Found") {
+        if (PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f1_key)) == "Not Found") {
             PreferencesHelper.saveData(MainActivity.this, "F1 String", getResources().getString(R.string.f1_key));
         }
 
-        if(PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f2_key)) == "Not Found") {
+        if (PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f2_key)) == "Not Found") {
             PreferencesHelper.saveData(MainActivity.this, "F2 String", getResources().getString(R.string.f2_key));
         }
 
@@ -119,22 +120,26 @@ public class MainActivity extends AppCompatActivity {
         moveForward = findViewById(R.id.moveForwardBtn);
         moveLeft = findViewById(R.id.moveLeftBtn);
         moveRight = findViewById(R.id.moveRightBtn);
-        micBtn=findViewById(R.id.micBtn);
+        micBtn = findViewById(R.id.micBtn);
 
-        if(!manualSwitch.isChecked()) {
+        if (!manualSwitch.isChecked()) {
             refresh.setEnabled(false);
         }
 
         manualSwitch.setOnClickListener(v -> {
-            if(manualSwitch.isChecked())
-            refresh.setEnabled(true);
+            if (manualSwitch.isChecked())
+                refresh.setEnabled(true);
             else refresh.setEnabled(false);
         });
 
         refresh.setOnClickListener(v -> {
+
+            byteArr = "sendArena".getBytes(charset);
+            mBluetoothConnection.write(byteArr);
+
             ArrayList<String> messageList = Util.getManualListItems();
-            for(String message : messageList) {
-                if(message.contains("mov")) {
+            for (String message : messageList) {
+                if (message.contains("mov")) {
                     Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(message);
                     while (action.find()) {
                         if (action.group(1).equals("forward"))
@@ -153,6 +158,29 @@ public class MainActivity extends AppCompatActivity {
                             adapter.notifyItemChanged(pos);
                         }
                     }
+                } else if (message.contains("grid")) {
+                    String receivedMessage = Util.gridTest(message.substring(10));
+                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                    ArrayList<String> receivedArray = new ArrayList<>();
+                    while (loc.find()) {
+                        receivedArray.add(loc.group(1));
+                    }
+                    ArrayList<String> tempObstacleList = new ArrayList<>();
+                    tempObstacleList.addAll(Util.obstacleList);
+                    tempObstacleList.removeAll(receivedArray);
+                    receivedArray.removeAll(Util.obstacleList);
+                    System.out.println("To be Removed" + tempObstacleList);
+                    System.out.println("To be Added" + receivedArray);
+                    for (String s : receivedArray) {
+                        int pos = Util.setObstacle(mazeCells, s, "");
+                        adapter.notifyItemChanged(pos);
+                    }
+                    for (String s : tempObstacleList) {
+                        int pos = Util.removeObstacle(mazeCells, s);
+                        adapter.notifyItemChanged(pos);
+                    }
+                    Util.obstacleList.addAll(receivedArray);
+                    Util.obstacleList.removeAll(tempObstacleList);
                 }
             }
             Util.clearAllManualMessages();
@@ -169,21 +197,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private BroadcastReceiver updateBluetoothStatus = new BroadcastReceiver() {
-        @Override public void onReceive(Context context, Intent intent) {onResume();}};
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            onResume();
+        }
+    };
 
 
-    public void voiceCommand(View view){
+    public void voiceCommand(View view) {
 
-        if(connStatus.equalsIgnoreCase(Constants.BLUETOOTH_CONNECTED)){
+        if (connStatus.equalsIgnoreCase(Constants.BLUETOOTH_CONNECTED)) {
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, new Locale("English (US)", "en_US"));
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Provide instructions");
-            try{ startActivityForResult(intent,Constants.REQUEST_CODE_SPEECH_INPUT);} catch (Exception e) {Log.d(TAG,e.getMessage());}
-        }
-
-        else{
-            Snackbar.make(view,Constants.BLUETOOTH_NOT_CONNECTED,Snackbar.LENGTH_SHORT).show();
+            try {
+                startActivityForResult(intent, Constants.REQUEST_CODE_SPEECH_INPUT);
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+        } else {
+            Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
         }
 
     }
@@ -195,35 +229,32 @@ public class MainActivity extends AppCompatActivity {
             case Constants.REQUEST_CODE_SPEECH_INPUT:
                 if (resultCode == RESULT_OK && data != null) {
                     ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                     parseVoiceInput(result.get(0));}
-                break; }
+                    parseVoiceInput(result.get(0));
+                }
+                break;
+        }
     }
 
     private void parseVoiceInput(String string) {
-        string=string.toLowerCase();
+        string = string.toLowerCase();
         String status;
-        if(string.contains(Constants.VOICE_MOV)){
-            if (string.contains(Constants.VOICE_FORWARD)){
+        if (string.contains(Constants.VOICE_MOV)) {
+            if (string.contains(Constants.VOICE_FORWARD)) {
                 moveForward.performClick();
-                status=Constants.VOICE_FORWARD_STATUS;
-            }
-            else if (string.contains(Constants.VOICE_RIGHT)){
+                status = Constants.VOICE_FORWARD_STATUS;
+            } else if (string.contains(Constants.VOICE_RIGHT)) {
                 moveRight.performClick();
-                status=Constants.VOICE_RIGHT_STATUS;
-            }
-            else if (string.contains(Constants.VOICE_LEFT)){
+                status = Constants.VOICE_RIGHT_STATUS;
+            } else if (string.contains(Constants.VOICE_LEFT)) {
                 moveLeft.performClick();
-                status=Constants.VOICE_LEFT_STATUS;
-            }
+                status = Constants.VOICE_LEFT_STATUS;
+            } else
+                status = Constants.VOICE_ERROR_STATUS;
 
-            else
-                status=Constants.VOICE_ERROR_STATUS;
+        } else
+            status = Constants.VOICE_ERROR_STATUS;
 
-        }
-        else
-            status=Constants.VOICE_ERROR_STATUS;
-
-        Util.setStatus(MainActivity.this,status);
+        Util.setStatus(MainActivity.this, status);
     }
 
     public void moveForward(View view) {
@@ -243,27 +274,25 @@ public class MainActivity extends AppCompatActivity {
         f2String = (TextInputLayout) dialog.findViewById(R.id.stringF2);
         PreferencesHelper.saveData(this, f1String.getEditText().getText().toString(), getResources().getString(R.string.f1_key));
         PreferencesHelper.saveData(this, f2String.getEditText().getText().toString(), getResources().getString(R.string.f2_key));
-        Snackbar.make(view , "F1/F2 strings updated successfully", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, "F1/F2 strings updated successfully", Snackbar.LENGTH_LONG).show();
     }
 
     public void sendStringF1(View view) {
         byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f1_key)).getBytes(charset);
-        if(mBluetoothConnection.getBluetoothConnectionStatus()){
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             mBluetoothConnection.write(byteArr);
             Snackbar.make(view, "String F1 Sent", Snackbar.LENGTH_SHORT).show();
-        }
-        else
+        } else
             Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
     public void sendStringF2(View view) {
         byteArr = PreferencesHelper.loadData(this, getResources().getString(R.string.f2_key)).getBytes(charset);
 
-        if(mBluetoothConnection.getBluetoothConnectionStatus()){
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             mBluetoothConnection.write(byteArr);
             Snackbar.make(view, "String F2 Sent", Snackbar.LENGTH_SHORT).show();
-        }
-        else
+        } else
             Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
@@ -297,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
 
-        } else if (item.getItemId() == R.id.bluetooth_chat){
+        } else if (item.getItemId() == R.id.bluetooth_chat) {
             Intent intent = new Intent(this, BluetoothChatUI.class);
             startActivity(intent);
             return true;
@@ -328,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(receivedMessage);
 
                 Matcher status = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                while(status.find()) {
+                while (status.find()) {
                     System.out.println(status.group(1));
                     Util.setStatus(MainActivity.this, status.group(1));
                 }
@@ -337,12 +366,58 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public BroadcastReceiver changeBotPosition = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equalsIgnoreCase("changeBotPosition")) {
+                String receivedMessage = intent.getStringExtra("receivedMessage");
+                /*
+                Matcher newCor = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+                while (newCor.find()) {
+                    ArrayList<String> coordinates = new ArrayList<>(Arrays.asList(newCor.group(1).split(",")));
+
+                    int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
+                    int x = Integer.parseInt(coordinates.get(0));
+                    int y = Integer.parseInt(coordinates.get(1)) - 17;
+                    int pos = Util.getPositionFromCoordinate("(" + x + "," + y + ")", mazeCells);
+                    System.out.print("Bot Change" + x + " " + y + " " + pos);
+
+                    // Remove current position & add new position
+                    for (int i = 0; i <= 2; i++) {
+                        mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
+                        mazeCells.get(pos + i).setBgColor(R.color.bot);
+                        adapter.notifyItemChanged(currentPosition + i);
+                        adapter.notifyItemChanged(pos + i);
+                    }
+
+                    for (int i = 15; i >= 13; i--) {
+                        mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
+                        mazeCells.get(pos - i).setBgColor(R.color.bot);
+                        adapter.notifyItemChanged(currentPosition - i);
+                        adapter.notifyItemChanged(pos - i);
+                    }
+
+                    for (int i = 30; i >= 28; i--) {
+                        mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
+                        mazeCells.get(pos - i).setBgColor(R.color.bot);
+                        adapter.notifyItemChanged(currentPosition - i);
+                        adapter.notifyItemChanged(pos - i);
+                    }
+                    Util.setStartPoint(mazeCells.get(pos).getCellName());
+                    mazeCells.get(pos - 29).setBgColor(R.color.heading);
+                    Util.setHeading("forward");
+                }
+                 */
+            }
+        }
+    };
+
     public BroadcastReceiver mazeUpdate = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equalsIgnoreCase("mazeUpdate")) {
                 manualSwitch = findViewById(R.id.manulAutoControl);
-                if(!manualSwitch.isChecked()) {
+                if (!manualSwitch.isChecked()) {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
@@ -358,21 +433,56 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    public BroadcastReceiver gridObstacles = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equalsIgnoreCase("gridObstacles")) {
+                manualSwitch = findViewById(R.id.manulAutoControl);
+                if (!manualSwitch.isChecked()) {
+                    Util.removeManualMessage();
+                    String receivedMessage = intent.getStringExtra("receivedMessage");
+                    System.out.println(receivedMessage);
+                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                    ArrayList<String> receivedArray = new ArrayList<>();
+                    while (loc.find()) {
+                        receivedArray.add(loc.group(1));
+                    }
+                    ArrayList<String> tempObstacleList = new ArrayList<>();
+                    tempObstacleList.addAll(Util.obstacleList);
+                    tempObstacleList.removeAll(receivedArray);
+                    receivedArray.removeAll(Util.obstacleList);
+                    System.out.println("To be Removed" + tempObstacleList);
+                    System.out.println("To be Added" + receivedArray);
+                    for (String s : receivedArray) {
+                        int pos = Util.setObstacle(mazeCells, s, "");
+                        adapter.notifyItemChanged(pos);
+                    }
+                    for (String s : tempObstacleList) {
+                        int pos = Util.removeObstacle(mazeCells, s);
+                        adapter.notifyItemChanged(pos);
+                    }
+                    Util.obstacleList.addAll(receivedArray);
+                    Util.obstacleList.removeAll(tempObstacleList);
+                }
+            }
+        }
+    };
+
     public BroadcastReceiver botUpdate = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equalsIgnoreCase("botUpdate")) {
                 manualSwitch = findViewById(R.id.manulAutoControl);
-                if(!manualSwitch.isChecked()) {
+                if (!manualSwitch.isChecked()) {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
                     Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
                     while (action.find()) {
-                        if(action.group(1).equals("forward"))
+                        if (action.group(1).equals("forward"))
                             drive.moveBotForward(findViewById(android.R.id.content));
-                        else if(action.group(1).equals("left"))
+                        else if (action.group(1).equals("left"))
                             drive.moveBotLeft(findViewById(android.R.id.content));
-                        else if(action.group(1).equals("right"))
+                        else if (action.group(1).equals("right"))
                             drive.moveBotRight(findViewById(android.R.id.content));
                     }
                 }
@@ -392,5 +502,5 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //    }
 
-      
+
 }
