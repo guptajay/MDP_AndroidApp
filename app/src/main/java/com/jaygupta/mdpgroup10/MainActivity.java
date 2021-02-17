@@ -37,6 +37,7 @@ import com.jaygupta.mdpgroup10.utils.Constants;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -371,44 +372,63 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equalsIgnoreCase("changeBotPosition")) {
                 String receivedMessage = intent.getStringExtra("receivedMessage");
-                /*
+
                 Matcher newCor = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
                 while (newCor.find()) {
                     ArrayList<String> coordinates = new ArrayList<>(Arrays.asList(newCor.group(1).split(",")));
-
                     int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
                     int x = Integer.parseInt(coordinates.get(0));
-                    int y = Integer.parseInt(coordinates.get(1)) - 17;
-                    int pos = Util.getPositionFromCoordinate("(" + x + "," + y + ")", mazeCells);
-                    System.out.print("Bot Change" + x + " " + y + " " + pos);
+                    int y = 17 - Integer.parseInt(coordinates.get(1).replaceAll(" ", ""));
+                    int heading = Integer.parseInt(coordinates.get(2).replaceAll(" ", ""));
+                    int pos = Util.getPositionFromCoordinate(x + "," + y, mazeCells);
+                    Log.d(TAG, "Bot Change" + x + " " + y + " " + pos);
 
-                    // Remove current position & add new position
-                    for (int i = 0; i <= 2; i++) {
-                        mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
-                        mazeCells.get(pos + i).setBgColor(R.color.bot);
-                        adapter.notifyItemChanged(currentPosition + i);
-                        adapter.notifyItemChanged(pos + i);
+                    if (pos != currentPosition) {
+                        // Remove current position & add new position
+                        for (int i = 0; i <= 2; i++) {
+                            mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
+                            mazeCells.get(pos + i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition + i);
+                            adapter.notifyItemChanged(pos + i);
+                        }
+
+                        for (int i = 15; i >= 13; i--) {
+                            mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
+                            mazeCells.get(pos - i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition - i);
+                            adapter.notifyItemChanged(pos - i);
+                        }
+
+                        for (int i = 30; i >= 28; i--) {
+                            mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
+                            mazeCells.get(pos - i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition - i);
+                            adapter.notifyItemChanged(pos - i);
+                        }
+                        Util.setStartPoint(mazeCells.get(pos).getCellName());
+                        mazeCells.get(pos - 29).setBgColor(R.color.heading);
+                        Util.setHeading("forward");
                     }
 
-                    for (int i = 15; i >= 13; i--) {
-                        mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
-                        mazeCells.get(pos - i).setBgColor(R.color.bot);
-                        adapter.notifyItemChanged(currentPosition - i);
-                        adapter.notifyItemChanged(pos - i);
-                    }
+                    System.out.println(heading);
+                    System.out.println(Util.getHeading());
 
-                    for (int i = 30; i >= 28; i--) {
-                        mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
-                        mazeCells.get(pos - i).setBgColor(R.color.bot);
-                        adapter.notifyItemChanged(currentPosition - i);
-                        adapter.notifyItemChanged(pos - i);
-                    }
-                    Util.setStartPoint(mazeCells.get(pos).getCellName());
-                    mazeCells.get(pos - 29).setBgColor(R.color.heading);
-                    Util.setHeading("forward");
+                    if (heading == 90)
+                        if(Util.getHeading().equals("back")) moveLeft.performClick();
+                        else moveRight.performClick();
+                    else if (heading == 270)
+                        if(Util.getHeading().equals("back")) moveRight.performClick();
+                        else moveLeft.performClick();
+                    else if (heading == 180)
+                        if (Util.getHeading().equals("right")) moveRight.performClick();
+                        else if (Util.getHeading().equals("left")) moveLeft.performClick();
+                    else if (heading == 0) {
+                            if (Util.getHeading().equals("right")) moveLeft.performClick();
+                            else if (Util.getHeading().equals("left")) moveRight.performClick();
+                        }
                 }
-                 */
             }
+
         }
     };
 
