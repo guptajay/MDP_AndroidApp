@@ -18,8 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MDPGroup10">
         <activity android:name=".bluetooth_services.BluetoothChatUI"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@android:style/Theme.NoTitleBar"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".bluetooth_services.BluetoothConnectionUI"
             android:windowSoftInputMode="adjustResize" />

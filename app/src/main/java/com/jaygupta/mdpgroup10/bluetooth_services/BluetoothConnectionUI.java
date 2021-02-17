@@ -28,9 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.jaygupta.mdpgroup10.MainActivity;
 import com.jaygupta.mdpgroup10.R;
-import com.jaygupta.mdpgroup10.Util;
 import com.jaygupta.mdpgroup10.utils.Constants;
 
 import java.util.ArrayList;
@@ -103,11 +101,11 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
         IntentFilter bluetoothStateChangeFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(updateBluetoothStatus,bluetoothStateChangeFilter);
 
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
-        registerReceiver(mBroadcastReceiver4, filter);
+        IntentFilter bondActionStateFilter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
+        registerReceiver(bondActionReceiver, bondActionStateFilter);
 
-        IntentFilter filter2 = new IntentFilter("ConnectionStatus");
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver5, filter2);
+        IntentFilter connectionStatusFilter = new IntentFilter("ConnectionStatus");
+        LocalBroadcastManager.getInstance(this).registerReceiver(connectionStatusReceiver, connectionStatusFilter);
 
 
        // LocalBroadcastManager.getInstance(this).registerReceiver(messageReceived, new IntentFilter("incomingMessage"));
@@ -337,7 +335,7 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
         }
     };
 
-    private BroadcastReceiver mBroadcastReceiver4 = new BroadcastReceiver() {
+    private BroadcastReceiver bondActionReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG,"mBroadcastReceiver4");
@@ -360,7 +358,7 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
         }
     };
 
-    private BroadcastReceiver mBroadcastReceiver5 = new BroadcastReceiver() {
+    private BroadcastReceiver connectionStatusReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             BluetoothDevice mDevice = intent.getParcelableExtra("Device");
@@ -426,8 +424,8 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
         try {
             unregisterReceiver(mBroadcastReceiver2);
             unregisterReceiver(foundDeviceBroadcastReceiver);
-            unregisterReceiver(mBroadcastReceiver4);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
+            unregisterReceiver(bondActionReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionStatusReceiver);
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }
@@ -441,8 +439,8 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
             unregisterReceiver(updateBluetoothStatus);
             unregisterReceiver(mBroadcastReceiver2);
             unregisterReceiver(foundDeviceBroadcastReceiver);
-            unregisterReceiver(mBroadcastReceiver4);
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver5);
+            unregisterReceiver(bondActionReceiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(connectionStatusReceiver);
         } catch(IllegalArgumentException e){
             e.printStackTrace();
         }
