@@ -258,8 +258,21 @@ public class BluetoothConnectionUI extends AppCompatActivity implements View.OnC
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.bluetooth_status);
-        item.setTitle(this.connStatus);
+
+        MenuItem bluetooth = menu.findItem(R.id.bluetooth);
+        MenuItem information = menu.findItem(R.id.information);
+        MenuItem bluetooth_chat = menu.findItem(R.id.bluetooth_chat);
+        MenuItem configureStrings = menu.findItem(R.id.configureStrings);
+
+        bluetooth.setVisible(false);
+        information.setVisible(false);
+        bluetooth_chat.setVisible(false);
+        configureStrings.setVisible(false);
+
+
+        MenuItem bluetoothStatus = menu.findItem(R.id.bluetooth_status);
+
+        bluetoothStatus.setTitle("BLUETOOTH ".concat(this.connStatus));
         return super.onPrepareOptionsMenu(menu);
     }
 

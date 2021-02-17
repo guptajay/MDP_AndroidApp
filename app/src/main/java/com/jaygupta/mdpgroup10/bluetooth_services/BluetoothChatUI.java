@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,7 +42,7 @@ public class BluetoothChatUI extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Bluetooth Communication");
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         bluetoothConnectionService = new BluetoothConnectionService(this);
         sendInput=findViewById(R.id.sendInput);
         sendBtn = findViewById(R.id.send_btn);

@@ -1,5 +1,6 @@
 package com.jaygupta.mdpgroup10.bluetooth_services;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -37,8 +39,10 @@ public class BluetoothChatService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG,"Activity Started");
+
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceived, new IntentFilter("incomingMessage"));
     }
+
 
 
     @Override
