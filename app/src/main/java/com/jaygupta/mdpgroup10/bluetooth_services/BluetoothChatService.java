@@ -15,6 +15,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.jaygupta.mdpgroup10.Util;
 
+import static com.jaygupta.mdpgroup10.Util.setManualListItems;
 import static com.jaygupta.mdpgroup10.Util.setMessageListItems;
 
 
@@ -51,6 +52,7 @@ public class BluetoothChatService extends Service {
             if (intent != null && intent.getAction().equalsIgnoreCase("incomingMessage")) {
                 String receivedMessage = intent.getStringExtra("receivedMessage");
                 setMessageListItems("Received: " + receivedMessage);
+                setManualListItems("Received: " + receivedMessage);
                 Log.d(TAG,"Message received " + receivedMessage);
 
 
