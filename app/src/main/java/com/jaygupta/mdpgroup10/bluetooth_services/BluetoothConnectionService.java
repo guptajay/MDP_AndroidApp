@@ -9,7 +9,6 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
 
 import androidx.appcompat.app.AlertDialog;

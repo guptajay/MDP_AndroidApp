@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Util {
 
@@ -17,6 +18,8 @@ public class Util {
     static String startPoint = "0,0";
     static String heading = "forward";
     static int orientation = 0;
+    static ArrayList<Integer> outOfBoundsLeft = new ArrayList<Integer>(Arrays.asList(30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 245, 255, 270, 285));
+    static ArrayList<Integer> outOfBoundsRight = new ArrayList<Integer>(Arrays.asList(42, 57, 72, 87, 102, 117, 132, 147, 162, 177, 192, 207, 222, 237, 252, 267, 282, 297));
 
 
     public static ArrayList<String> getMessageListItems() {

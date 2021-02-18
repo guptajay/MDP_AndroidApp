@@ -37,92 +37,105 @@ public class RobotDrive {
 
 
     public void moveBotForward(View view) {
-        byteArr = context.getResources().getString(R.string.bluetooth_move_forward).getBytes(charset);
-        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
-            //mBluetoothConnection.write(byteArr);
 
-            setCurrentPosition();
+            byteArr = context.getResources().getString(R.string.bluetooth_move_forward).getBytes(charset);
+            if (mBluetoothConnection.getBluetoothConnectionStatus()) {
+                setCurrentPosition();
+                System.out.println(currentPosition);
+                System.out.println(Util.getHeading().equals("forward"));
 
-            if (Util.getHeading().equals("forward")) {
-                for (int i = 0; i <= 2; i++) {
-                    mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
-                    mazeCells.get(currentPosition - 45 + i).setBgColor(R.color.bot);
-                    adapter.notifyItemChanged(currentPosition + i);
-                    adapter.notifyItemChanged(currentPosition - 45 + i);
+                if(30 <= currentPosition && 44 >= currentPosition && Util.getHeading().equals("forward"))
+                    System.out.println("Out of Bounds");
+                else if (285 <= currentPosition && 297 >= currentPosition && Util.getHeading().equals("back"))
+                    System.out.println("Out of Bounds");
+                else if (Util.outOfBoundsLeft.contains(currentPosition) && Util.getHeading().equals("left"))
+                    System.out.println("Out of Bounds");
+                else if (Util.outOfBoundsRight.contains(currentPosition) && Util.getHeading().equals("right"))
+                    System.out.println("Out of Bounds");
+                else {
+                    mBluetoothConnection.write(byteArr);
+                    if (Util.getHeading().equals("forward")) {
+                        for (int i = 0; i <= 2; i++) {
+                            mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
+                            mazeCells.get(currentPosition - 45 + i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition + i);
+                            adapter.notifyItemChanged(currentPosition - 45 + i);
+                        }
+
+                        mazeCells.get(currentPosition - 44).setBgColor(R.color.heading);
+                        mazeCells.get(currentPosition - 29).setBgColor(R.color.bot);
+                        adapter.notifyItemChanged(currentPosition - 44);
+                        adapter.notifyItemChanged(currentPosition - 29);
+                        Util.setStartPoint(mazeCells.get(currentPosition - 15).getCellName());
+
+                    } else if (Util.getHeading().equals("left")) {
+
+                        mazeCells.get(currentPosition + 2).setBgColor(R.color.maze);
+                        mazeCells.get(currentPosition - 13).setBgColor(R.color.maze);
+                        mazeCells.get(currentPosition - 28).setBgColor(R.color.maze);
+                        adapter.notifyItemChanged(currentPosition + 2);
+                        adapter.notifyItemChanged(currentPosition - 13);
+                        adapter.notifyItemChanged(currentPosition - 28);
+
+                        mazeCells.get(currentPosition - 16).setBgColor(R.color.heading);
+                        adapter.notifyItemChanged(currentPosition - 16);
+
+                        mazeCells.get(currentPosition - 1).setBgColor(R.color.bot);
+                        mazeCells.get(currentPosition - 31).setBgColor(R.color.bot);
+                        mazeCells.get(currentPosition - 15).setBgColor(R.color.bot);
+                        adapter.notifyItemChanged(currentPosition - 1);
+                        adapter.notifyItemChanged(currentPosition - 31);
+                        adapter.notifyItemChanged(currentPosition - 15);
+
+                        Util.setStartPoint(mazeCells.get(currentPosition - 1).getCellName());
+
+                    } else if (Util.getHeading().equals("back")) {
+
+                        for (int i = 30; i >= 28; i--) {
+                            mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
+                            mazeCells.get(currentPosition - 13 + i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition - i);
+                            adapter.notifyItemChanged(currentPosition - 13 + i);
+                        }
+
+                        mazeCells.get(currentPosition + 16).setBgColor(R.color.heading);
+                        mazeCells.get(currentPosition + 1).setBgColor(R.color.bot);
+                        adapter.notifyItemChanged(currentPosition + 16);
+                        adapter.notifyItemChanged(currentPosition + 1);
+                        Util.setStartPoint(mazeCells.get(currentPosition + 15).getCellName());
+
+                    } else if (Util.getHeading().equals("right")) {
+
+                        mazeCells.get(currentPosition + 3).setBgColor(R.color.bot);
+                        mazeCells.get(currentPosition - 13).setBgColor(R.color.bot);
+                        mazeCells.get(currentPosition - 27).setBgColor(R.color.bot);
+                        adapter.notifyItemChanged(currentPosition + 3);
+                        adapter.notifyItemChanged(currentPosition - 13);
+                        adapter.notifyItemChanged(currentPosition - 27);
+
+                        mazeCells.get(currentPosition - 12).setBgColor(R.color.heading);
+                        adapter.notifyItemChanged(currentPosition - 12);
+
+                        mazeCells.get(currentPosition).setBgColor(R.color.maze);
+                        mazeCells.get(currentPosition - 30).setBgColor(R.color.maze);
+                        mazeCells.get(currentPosition - 15).setBgColor(R.color.maze);
+                        adapter.notifyItemChanged(currentPosition);
+                        adapter.notifyItemChanged(currentPosition - 30);
+                        adapter.notifyItemChanged(currentPosition - 15);
+
+                        Util.setStartPoint(mazeCells.get(currentPosition + 1).getCellName());
+                    }
                 }
-
-                mazeCells.get(currentPosition - 44).setBgColor(R.color.heading);
-                mazeCells.get(currentPosition - 29).setBgColor(R.color.bot);
-                adapter.notifyItemChanged(currentPosition - 44);
-                adapter.notifyItemChanged(currentPosition - 29);
-                Util.setStartPoint(mazeCells.get(currentPosition - 15).getCellName());
-
-            } else if (Util.getHeading().equals("left")) {
-
-                mazeCells.get(currentPosition + 2).setBgColor(R.color.maze);
-                mazeCells.get(currentPosition - 13).setBgColor(R.color.maze);
-                mazeCells.get(currentPosition - 28).setBgColor(R.color.maze);
-                adapter.notifyItemChanged(currentPosition + 2);
-                adapter.notifyItemChanged(currentPosition - 13);
-                adapter.notifyItemChanged(currentPosition - 28);
-
-                mazeCells.get(currentPosition - 16).setBgColor(R.color.heading);
-                adapter.notifyItemChanged(currentPosition - 16);
-
-                mazeCells.get(currentPosition - 1).setBgColor(R.color.bot);
-                mazeCells.get(currentPosition - 31).setBgColor(R.color.bot);
-                mazeCells.get(currentPosition - 15).setBgColor(R.color.bot);
-                adapter.notifyItemChanged(currentPosition - 1);
-                adapter.notifyItemChanged(currentPosition - 31);
-                adapter.notifyItemChanged(currentPosition - 15);
-
-                Util.setStartPoint(mazeCells.get(currentPosition - 1).getCellName());
-
-            } else if (Util.getHeading().equals("back")) {
-
-                for (int i = 30; i >= 28; i--) {
-                    mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
-                    mazeCells.get(currentPosition - 13 + i).setBgColor(R.color.bot);
-                    adapter.notifyItemChanged(currentPosition - i);
-                    adapter.notifyItemChanged(currentPosition - 13 + i);
-                }
-
-                mazeCells.get(currentPosition + 16).setBgColor(R.color.heading);
-                mazeCells.get(currentPosition + 1).setBgColor(R.color.bot);
-                adapter.notifyItemChanged(currentPosition + 16);
-                adapter.notifyItemChanged(currentPosition + 1);
-                Util.setStartPoint(mazeCells.get(currentPosition + 15).getCellName());
-
-            } else if (Util.getHeading().equals("right")) {
-
-                mazeCells.get(currentPosition + 3).setBgColor(R.color.bot);
-                mazeCells.get(currentPosition - 13).setBgColor(R.color.bot);
-                mazeCells.get(currentPosition - 27).setBgColor(R.color.bot);
-                adapter.notifyItemChanged(currentPosition + 3);
-                adapter.notifyItemChanged(currentPosition - 13);
-                adapter.notifyItemChanged(currentPosition - 27);
-
-                mazeCells.get(currentPosition - 12).setBgColor(R.color.heading);
-                adapter.notifyItemChanged(currentPosition - 12);
-
-                mazeCells.get(currentPosition).setBgColor(R.color.maze);
-                mazeCells.get(currentPosition - 30).setBgColor(R.color.maze);
-                mazeCells.get(currentPosition - 15).setBgColor(R.color.maze);
-                adapter.notifyItemChanged(currentPosition);
-                adapter.notifyItemChanged(currentPosition - 30);
-                adapter.notifyItemChanged(currentPosition - 15);
-
-                Util.setStartPoint(mazeCells.get(currentPosition + 1).getCellName());
-            }
-        } else
-            Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
+            } else
+                Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
-    public void moveBotLeft(View view) {
+    public void moveBotLeft(View view, boolean cmdFromAMD) {
 
         byteArr =context.getResources().getString(R.string.bluetooth_move_left).getBytes(charset);
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
-            //mBluetoothConnection.write(byteArr);
+            if(!cmdFromAMD)
+            mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
 
@@ -161,11 +174,12 @@ public class RobotDrive {
             Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
-    public void moveBotRight(View view) {
+    public void moveBotRight(View view, boolean cmdFromAMD) {
 
         byteArr = context.getResources().getString(R.string.bluetooth_move_right).getBytes(charset);
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
-            //mBluetoothConnection.write(byteArr);
+            if(!cmdFromAMD)
+            mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
 
