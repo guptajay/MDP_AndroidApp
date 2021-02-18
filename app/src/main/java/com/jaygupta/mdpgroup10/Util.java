@@ -16,6 +16,7 @@ public class Util {
     static String wayPoint = "Not Selected";
     static String startPoint = "0,0";
     static String heading = "forward";
+    static int orientation = 0;
 
 
     public static ArrayList<String> getMessageListItems() {

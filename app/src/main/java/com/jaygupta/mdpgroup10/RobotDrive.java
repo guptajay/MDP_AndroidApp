@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class RobotDrive {
 
     private int currentPosition;
+    private int orientation;
     private ArrayList<mazeCell> mazeCells;
     private mazeRecViewAdapter adapter;
     private byte[] byteArr;
@@ -33,10 +34,12 @@ public class RobotDrive {
         this.currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
     }
 
+
+
     public void moveBotForward(View view) {
         byteArr = context.getResources().getString(R.string.bluetooth_move_forward).getBytes(charset);
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
-            mBluetoothConnection.write(byteArr);
+            //mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
 
@@ -119,7 +122,7 @@ public class RobotDrive {
 
         byteArr =context.getResources().getString(R.string.bluetooth_move_left).getBytes(charset);
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
-            mBluetoothConnection.write(byteArr);
+            //mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
 
@@ -162,7 +165,7 @@ public class RobotDrive {
 
         byteArr = context.getResources().getString(R.string.bluetooth_move_right).getBytes(charset);
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
-            mBluetoothConnection.write(byteArr);
+            //mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
 
