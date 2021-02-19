@@ -37,6 +37,7 @@ import com.jaygupta.mdpgroup10.utils.Constants;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         Util.initGoal(mazeCells);
         adapter.notifyDataSetChanged();
 
+        drive = new RobotDrive(mazeCells, adapter, this, mBluetoothConnection);
         // Set Shared Preferences Strings Default
         if (PreferencesHelper.loadData(MainActivity.this, getResources().getString(R.string.f1_key)) == "Not Found") {
             PreferencesHelper.saveData(MainActivity.this, "F1 String", getResources().getString(R.string.f1_key));
@@ -124,12 +126,27 @@ public class MainActivity extends AppCompatActivity {
 
         if (!manualSwitch.isChecked()) {
             refresh.setEnabled(false);
+            moveForward.setEnabled(false);
+            moveLeft.setEnabled(false);
+            moveRight.setEnabled(false);
+            micBtn.setEnabled(false);
         }
 
         manualSwitch.setOnClickListener(v -> {
-            if (manualSwitch.isChecked())
+            if (manualSwitch.isChecked()) {
                 refresh.setEnabled(true);
-            else refresh.setEnabled(false);
+                moveForward.setEnabled(true);
+                moveLeft.setEnabled(true);
+                moveRight.setEnabled(true);
+                micBtn.setEnabled(true);
+            }
+            else {
+                refresh.setEnabled(false);
+                moveForward.setEnabled(false);
+                moveLeft.setEnabled(false);
+                moveRight.setEnabled(false);
+                micBtn.setEnabled(false);
+            }
         });
 
         refresh.setOnClickListener(v -> {
@@ -137,56 +154,63 @@ public class MainActivity extends AppCompatActivity {
             byteArr = "sendArena".getBytes(charset);
             mBluetoothConnection.write(byteArr);
 
-            ArrayList<String> messageList = Util.getManualListItems();
-            for (String message : messageList) {
-                if (message.contains("mov")) {
-                    Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(message);
-                    while (action.find()) {
-                        if (action.group(1).equals("forward"))
-                            drive.moveBotForward(findViewById(android.R.id.content));
-                        else if (action.group(1).equals("left"))
-                            drive.moveBotLeft(findViewById(android.R.id.content));
-                        else if (action.group(1).equals("right"))
-                            drive.moveBotRight(findViewById(android.R.id.content));
-                    }
-                } else if (message.contains("obs")) {
-                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(message);
-                    Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(message);
-                    while (loc.find()) {
-                        while (obsNum.find()) {
-                            int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
-                            adapter.notifyItemChanged(pos);
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<String> messageList = Util.getManualListItems();
+                    for (String message : messageList) {
+                        if (message.contains("mov")) {
+                            Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(message);
+                            while (action.find()) {
+                                if (action.group(1).equals("forward"))
+                                    drive.moveBotForward(findViewById(android.R.id.content));
+                                else if (action.group(1).equals("left"))
+                                    drive.moveBotLeft(findViewById(android.R.id.content), false);
+                                else if (action.group(1).equals("right"))
+                                    drive.moveBotRight(findViewById(android.R.id.content), false);
+                            }
+                        } else if (message.contains("obs")) {
+                            Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(message);
+                            Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(message);
+                            while (loc.find()) {
+                                while (obsNum.find()) {
+                                    int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
+                                    adapter.notifyItemChanged(pos);
+                                }
+                            }
+                        } else if (message.contains("grid")) {
+                            String receivedMessage = Util.gridTest(message.substring(10));
+                            Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                            ArrayList<String> receivedArray = new ArrayList<>();
+                            while (loc.find()) {
+                                receivedArray.add(loc.group(1));
+                            }
+                            ArrayList<String> tempObstacleList = new ArrayList<>();
+                            tempObstacleList.addAll(Util.obstacleList);
+                            tempObstacleList.removeAll(receivedArray);
+                            receivedArray.removeAll(Util.obstacleList);
+                            System.out.println("To be Removed" + tempObstacleList);
+                            System.out.println("To be Added" + receivedArray);
+                            for (String s : receivedArray) {
+                                int pos = Util.setObstacle(mazeCells, s, "");
+                                adapter.notifyItemChanged(pos);
+                            }
+                            for (String s : tempObstacleList) {
+                                int pos = Util.removeObstacle(mazeCells, s);
+                                adapter.notifyItemChanged(pos);
+                            }
+                            Util.obstacleList.addAll(receivedArray);
+                            Util.obstacleList.removeAll(tempObstacleList);
                         }
                     }
-                } else if (message.contains("grid")) {
-                    String receivedMessage = Util.gridTest(message.substring(10));
-                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                    ArrayList<String> receivedArray = new ArrayList<>();
-                    while (loc.find()) {
-                        receivedArray.add(loc.group(1));
-                    }
-                    ArrayList<String> tempObstacleList = new ArrayList<>();
-                    tempObstacleList.addAll(Util.obstacleList);
-                    tempObstacleList.removeAll(receivedArray);
-                    receivedArray.removeAll(Util.obstacleList);
-                    System.out.println("To be Removed" + tempObstacleList);
-                    System.out.println("To be Added" + receivedArray);
-                    for (String s : receivedArray) {
-                        int pos = Util.setObstacle(mazeCells, s, "");
-                        adapter.notifyItemChanged(pos);
-                    }
-                    for (String s : tempObstacleList) {
-                        int pos = Util.removeObstacle(mazeCells, s);
-                        adapter.notifyItemChanged(pos);
-                    }
-                    Util.obstacleList.addAll(receivedArray);
-                    Util.obstacleList.removeAll(tempObstacleList);
+                    Util.clearAllManualMessages();
                 }
-            }
-            Util.clearAllManualMessages();
+            }, 1000);
+
         });
 
-        drive = new RobotDrive(mazeCells, adapter, this, mBluetoothConnection);
+
     }
 
     @Override
@@ -240,13 +264,13 @@ public class MainActivity extends AppCompatActivity {
         String status;
         if (string.contains(Constants.VOICE_MOV)) {
             if (string.contains(Constants.VOICE_FORWARD)) {
-                moveForward.performClick();
+                drive.moveBotForward(findViewById(android.R.id.content));
                 status = Constants.VOICE_FORWARD_STATUS;
             } else if (string.contains(Constants.VOICE_RIGHT)) {
-                moveRight.performClick();
+                drive.moveBotRight(findViewById(android.R.id.content),false);
                 status = Constants.VOICE_RIGHT_STATUS;
             } else if (string.contains(Constants.VOICE_LEFT)) {
-                moveLeft.performClick();
+                drive.moveBotLeft(findViewById(android.R.id.content),false);
                 status = Constants.VOICE_LEFT_STATUS;
             } else
                 status = Constants.VOICE_ERROR_STATUS;
@@ -262,11 +286,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void moveLeft(View view) {
-        drive.moveBotLeft(view);
+        drive.moveBotLeft(view, false);
     }
 
     public void moveRight(View view) {
-        drive.moveBotRight(view);
+        drive.moveBotRight(view, false);
     }
 
     public void setStrings(View view) {
@@ -371,45 +395,69 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equalsIgnoreCase("changeBotPosition")) {
                 String receivedMessage = intent.getStringExtra("receivedMessage");
-                /*
-                Matcher newCor = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
-                while (newCor.find()) {
-                    ArrayList<String> coordinates = new ArrayList<>(Arrays.asList(newCor.group(1).split(",")));
 
+
+
+                Matcher newCor = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+                ArrayList<String> coordinates=null;
+                while (newCor.find()) {
+                    coordinates = new ArrayList<>(Arrays.asList(newCor.group(1).split(",")));
+                }
                     int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
                     int x = Integer.parseInt(coordinates.get(0));
-                    int y = Integer.parseInt(coordinates.get(1)) - 17;
-                    int pos = Util.getPositionFromCoordinate("(" + x + "," + y + ")", mazeCells);
-                    System.out.print("Bot Change" + x + " " + y + " " + pos);
+                    int y = 17 - Integer.parseInt(coordinates.get(1).replaceAll(" ", ""));
+                    int heading = Integer.parseInt(coordinates.get(2).replaceAll(" ", ""));
+                    int pos = Util.getPositionFromCoordinate(x + "," + y, mazeCells);
+                    Log.d(TAG, "Bot Change" + x + " " + y + " " + pos);
 
-                    // Remove current position & add new position
-                    for (int i = 0; i <= 2; i++) {
-                        mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
-                        mazeCells.get(pos + i).setBgColor(R.color.bot);
-                        adapter.notifyItemChanged(currentPosition + i);
-                        adapter.notifyItemChanged(pos + i);
+                    if (pos != currentPosition) {
+                        // Remove current position & add new position
+                        for (int i = 0; i <= 2; i++) {
+                            mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
+                            mazeCells.get(pos + i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition + i);
+                            adapter.notifyItemChanged(pos + i);
+                        }
+
+                        for (int i = 15; i >= 13; i--) {
+                            mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
+                            mazeCells.get(pos - i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition - i);
+                            adapter.notifyItemChanged(pos - i);
+                        }
+
+                        for (int i = 30; i >= 28; i--) {
+                            mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
+                            mazeCells.get(pos - i).setBgColor(R.color.bot);
+                            adapter.notifyItemChanged(currentPosition - i);
+                            adapter.notifyItemChanged(pos - i);
+                        }
+                        Util.setStartPoint(mazeCells.get(pos).getCellName());
+                        mazeCells.get(pos - 29).setBgColor(R.color.heading);
+                        Util.setHeading("forward");
                     }
 
-                    for (int i = 15; i >= 13; i--) {
-                        mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
-                        mazeCells.get(pos - i).setBgColor(R.color.bot);
-                        adapter.notifyItemChanged(currentPosition - i);
-                        adapter.notifyItemChanged(pos - i);
-                    }
+                    System.out.println(heading);
+                    System.out.println(Util.getHeading());
 
-                    for (int i = 30; i >= 28; i--) {
-                        mazeCells.get(currentPosition - i).setBgColor(R.color.maze);
-                        mazeCells.get(pos - i).setBgColor(R.color.bot);
-                        adapter.notifyItemChanged(currentPosition - i);
-                        adapter.notifyItemChanged(pos - i);
-                    }
-                    Util.setStartPoint(mazeCells.get(pos).getCellName());
-                    mazeCells.get(pos - 29).setBgColor(R.color.heading);
-                    Util.setHeading("forward");
+                int orientation = heading - Util.orientation;
+                Log.d(TAG, "orientation: " + orientation);
+                if(orientation == 90 || orientation ==  -270){
+                    //move right
+                    //Util.setStatus(MainActivity.this, "Turning Right");
+                    drive.moveBotRight(findViewById(android.R.id.content), true);
+
                 }
-                 */
+                else if (orientation == -90 || orientation ==  270) {
+                    // move left
+                    //Util.setStatus(MainActivity.this, "Turning Left");
+                    drive.moveBotLeft(findViewById(android.R.id.content), true);
+                }
+
+                Util.orientation=heading;
+                }
             }
-        }
+
     };
 
     public BroadcastReceiver mazeUpdate = new BroadcastReceiver() {
@@ -481,9 +529,9 @@ public class MainActivity extends AppCompatActivity {
                         if (action.group(1).equals("forward"))
                             drive.moveBotForward(findViewById(android.R.id.content));
                         else if (action.group(1).equals("left"))
-                            drive.moveBotLeft(findViewById(android.R.id.content));
+                            drive.moveBotLeft(findViewById(android.R.id.content), false);
                         else if (action.group(1).equals("right"))
-                            drive.moveBotRight(findViewById(android.R.id.content));
+                            drive.moveBotRight(findViewById(android.R.id.content), false);
                     }
                 }
             }

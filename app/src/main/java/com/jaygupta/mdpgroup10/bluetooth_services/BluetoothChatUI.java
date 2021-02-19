@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,8 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.jaygupta.mdpgroup10.R;
+import com.jaygupta.mdpgroup10.Util;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 import static com.jaygupta.mdpgroup10.Util.getMessageListItems;
 import static com.jaygupta.mdpgroup10.Util.setMessageListItems;
@@ -41,7 +44,7 @@ public class BluetoothChatUI extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Bluetooth Communication");
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         bluetoothConnectionService = new BluetoothConnectionService(this);
         sendInput=findViewById(R.id.sendInput);
         sendBtn = findViewById(R.id.send_btn);
@@ -67,9 +70,11 @@ public class BluetoothChatUI extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         messagesListView = findViewById(R.id.listView_chat);
-        //messagesListView.setAdapter(messagesDeviceListAdapter);
-        messageListAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, getMessageListItems());
+
+        ArrayList <String> messages = Util.getMessageListItems();
+        messageListAdapter=new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, messages);
         messagesListView.setAdapter(messageListAdapter);
+
         Log.d(TAG, "On Resume");
         LocalBroadcastManager.getInstance(this).registerReceiver(messageReceived, new IntentFilter("incomingMessage"));
     }
