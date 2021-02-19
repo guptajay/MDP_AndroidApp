@@ -54,6 +54,7 @@ public class BluetoothChatService extends Service {
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "On BroadCastReceiver");
             if (intent != null && intent.getAction().equalsIgnoreCase("incomingMessage")) {
+
                 String receivedMessage = intent.getStringExtra("receivedMessage");
                 setMessageListItems("Received: " + receivedMessage);
                 setManualListItems("Received: " + receivedMessage);
