@@ -524,14 +524,29 @@ public class MainActivity extends AppCompatActivity {
                 if (!manualSwitch.isChecked()) {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
+
+                    System.out.println("Bot Movement Detected");
+
                     Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                    Matcher num = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+
+                    System.out.println(action);
+                    System.out.println(num);
+
                     while (action.find()) {
-                        if (action.group(1).equals("forward"))
-                            drive.moveBotForward(findViewById(android.R.id.content));
-                        else if (action.group(1).equals("left"))
-                            drive.moveBotLeft(findViewById(android.R.id.content), false);
-                        else if (action.group(1).equals("right"))
-                            drive.moveBotRight(findViewById(android.R.id.content), false);
+                        while(num.find()) {
+                            if (action.group(1).equals("F"))
+                                for (int i = 0; i < Integer.parseInt(num.group(1)); i++)
+                                    drive.moveBotForward(findViewById(android.R.id.content));
+                            else if (action.group(1).equals("L"))
+                                drive.moveBotLeft(findViewById(android.R.id.content), false);
+                            else if (action.group(1).equals("R"))
+                                drive.moveBotRight(findViewById(android.R.id.content), false);
+                            else if (action.group(1).equals("B")) {
+                                drive.moveBotRight(findViewById(android.R.id.content), false);
+                                drive.moveBotRight(findViewById(android.R.id.content), false);
+                            }
+                        }
                     }
                 }
             }

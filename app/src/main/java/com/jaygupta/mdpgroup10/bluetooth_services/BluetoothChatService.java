@@ -1,6 +1,5 @@
 package com.jaygupta.mdpgroup10.bluetooth_services;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -78,7 +76,7 @@ public class BluetoothChatService extends Service {
             Intent mazeUpdateIntent = new Intent("mazeUpdate");
             mazeUpdateIntent.putExtra("receivedMessage", receivedMessage);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(mazeUpdateIntent);
-        } else if(receivedMessage.contains("mov")){
+        } else if(receivedMessage.contains("MOV")){
             Intent botMoveIntent = new Intent("botUpdate");
             botMoveIntent.putExtra("receivedMessage", receivedMessage);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(botMoveIntent);
