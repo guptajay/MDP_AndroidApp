@@ -21,9 +21,9 @@
     <string name="configureStrings">Configure F1/F2 Strings</string>
     <string name="f1_key">f1Key</string>
     <string name="f2_key">f2Key</string>
-    <string name="bluetooth_move_forward">ARD|w1</string>
-    <string name="bluetooth_move_right">ARD|d1</string>
-    <string name="bluetooth_move_left">ARD|a1</string>
+    <string name="bluetooth_move_forward">AMD|w1</string>
+    <string name="bluetooth_move_right">AMD|d1</string>
+    <string name="bluetooth_move_left">AMD|a1</string>
     <string name="bluetooth_waypoint">ALG|</string>
     <string name="bluetooth_startpoint">ALG|</string>
 </resources>
