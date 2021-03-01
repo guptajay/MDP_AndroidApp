@@ -379,8 +379,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
-
-
                 String receivedMessage = intent.getStringExtra("receivedMessage");
                 System.out.println(receivedMessage);
                 Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
@@ -388,17 +386,12 @@ public class MainActivity extends AppCompatActivity {
                 while (loc.find()) {
                     receivedArray.add(loc.group(1));
                 }
-
                 for (String s : receivedArray) {
-
                     //Update this line
-
-                    int pos = Util.setObstacle(mazeCells, s, "10");
+                    int pos = Util.setExploredArea(mazeCells, s);
                     adapter.notifyItemChanged(pos);
                 }
-
                 }
-
         }
     };
 
