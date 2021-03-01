@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(botUpdate, new IntentFilter("botUpdate"));
         LocalBroadcastManager.getInstance(this).registerReceiver(gridObstacles, new IntentFilter("gridObstacles"));
         LocalBroadcastManager.getInstance(this).registerReceiver(changeBotPosition, new IntentFilter("changeBotPosition"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(updateExploredGrid, new IntentFilter("exploredPath"));
 
         // mazeRecView.setHasFixedSize(true);
         mazeCells = new ArrayList<>();
@@ -372,6 +373,34 @@ public class MainActivity extends AppCompatActivity {
         } else
             return super.onOptionsItemSelected(item);
     }
+
+    public BroadcastReceiver updateExploredGrid = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
+
+
+                String receivedMessage = intent.getStringExtra("receivedMessage");
+                System.out.println(receivedMessage);
+                Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                ArrayList<String> receivedArray = new ArrayList<>();
+                while (loc.find()) {
+                    receivedArray.add(loc.group(1));
+                }
+
+                for (String s : receivedArray) {
+
+                    //Update this line
+
+                    int pos = Util.setObstacle(mazeCells, s, "10");
+                    adapter.notifyItemChanged(pos);
+                }
+
+                }
+
+        }
+    };
 
     public BroadcastReceiver robotStatusUpdate = new BroadcastReceiver() {
         @Override
