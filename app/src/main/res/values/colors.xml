@@ -12,4 +12,5 @@
     <color name="heading">#940008</color>
     <color name="goal">#A6F1A6</color>
     <color name="mazeCellText">#676767</color>
+    <color name="waypoint">#7E83D1</color>
 </resources>
