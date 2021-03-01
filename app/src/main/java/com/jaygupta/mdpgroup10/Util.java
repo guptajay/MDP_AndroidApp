@@ -118,6 +118,12 @@ public class Util {
         return pos;
     }
 
+    public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position) {
+        int pos = getPositionFromCoordinate(position, mazeCells);
+        mazeCells.get(pos).setBgColor(R.color.goal);
+        return pos;
+    }
+
     public static int removeObstacle(ArrayList<mazeCell> mazeCells, String position) {
         int pos = getPositionFromCoordinate(position, mazeCells);
         mazeCells.get(pos).setDisplayName(position);
