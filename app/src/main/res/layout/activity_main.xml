@@ -152,7 +152,7 @@
                 android:background="@drawable/ic_refresh"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-             >
+                >
 
             </Button>
 
@@ -180,6 +180,48 @@
                     android:layout_toEndOf="@id/f1"
                     android:text="@string/f2"
                     android:onClick="sendStringF2">
+
+                </Button>
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/f1f2toggle"
+            android:id="@+id/startAlgos"
+            android:layout_marginStart="10dp">
+
+
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+
+                <Button
+                    android:id="@+id/FP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="sendStringF2"
+                    android:text="@string/FP"
+                    android:layout_marginTop="10dp">
+
+                </Button>
+
+                <Button
+                    android:id="@+id/exp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_below="@+id/FP"
+                    android:text="@string/exp"
+                    android:onClick="sendStringF2"
+                    android:layout_centerHorizontal="true">
 
                 </Button>
 
