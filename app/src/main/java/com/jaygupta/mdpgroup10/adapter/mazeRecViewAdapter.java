@@ -86,6 +86,18 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                         String s = context.getResources().getString(R.string.bluetooth_waypoint) + "FPW (" + cells.get(pos).getCellName() + ")";
                         byteArr = s.getBytes(charset);
                         if (bluetoothConnection.getBluetoothConnectionStatus()) {
+
+                            String currentWaypoint = Util.getWayPoint();
+                            int currentWP = Util.getPositionFromCoordinate(currentWaypoint, cells);
+
+                            System.out.println(currentWP);
+
+                            cells.get(currentWP).setBgColor(R.color.maze);
+                            notifyItemChanged(currentWP);
+
+                            cells.get(pos).setBgColor(R.color.waypoint);
+                            notifyItemChanged(pos);
+
                             bluetoothConnection.write(byteArr);
                             Util.setWayPoint(cells.get(pos).getCellName());
                             Snackbar.make(v, "Coordinate [" + Util.getWayPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
