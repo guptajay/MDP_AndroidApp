@@ -207,9 +207,9 @@
                     android:id="@+id/FP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="sendStringF2"
-                    android:text="@string/FP"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="10dp"
+                    android:onClick="startFastestPath"
+                    android:text="@string/FP">
 
                 </Button>
 

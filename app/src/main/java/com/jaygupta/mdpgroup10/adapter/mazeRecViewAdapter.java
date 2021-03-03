@@ -83,7 +83,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                 dialog.dismiss();
                 switch (which) {
                     case 0:
-                        String s = context.getResources().getString(R.string.bluetooth_waypoint) + "FPW (" + cells.get(pos).getCellName() + ")";
+                        String s = context.getResources().getString(R.string.bluetooth_waypoint) + "FPW:" + cells.get(pos).getCellName();
                         byteArr = s.getBytes(charset);
                         if (bluetoothConnection.getBluetoothConnectionStatus()) {
 

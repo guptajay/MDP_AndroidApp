@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "Main Activity";
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +123,31 @@ public class MainActivity extends AppCompatActivity {
         moveLeft = findViewById(R.id.moveLeftBtn);
         moveRight = findViewById(R.id.moveRightBtn);
         micBtn = findViewById(R.id.micBtn);
+
+        /*
+        String resultString = Util.gridTest("{\"grid\" : \"01000000000000F00000000000400007E0000000000000001F80000780000000000004000800\"}");
+        Log.d(TAG,"Test: " + resultString);
+        Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(resultString);
+        ArrayList<String> receivedArray = new ArrayList<>();
+        while (loc.find()) {
+            receivedArray.add(loc.group(1));
+        }
+        ArrayList<String> tempObstacleList = new ArrayList<>();
+        tempObstacleList.addAll(Util.obstacleList);
+        tempObstacleList.removeAll(receivedArray);
+        receivedArray.removeAll(Util.obstacleList);
+        System.out.println("To be Removed" + tempObstacleList);
+        System.out.println("To be Added" + receivedArray);
+        for (String s : receivedArray) {
+            int pos = Util.setObstacle(mazeCells, s, "");
+            adapter.notifyItemChanged(pos);
+        }
+        for (String s : tempObstacleList) {
+            int pos = Util.removeObstacle(mazeCells, s);
+            adapter.notifyItemChanged(pos);
+        }
+         */
+
 
         if (!manualSwitch.isChecked()) {
             refresh.setEnabled(false);
@@ -317,6 +341,15 @@ public class MainActivity extends AppCompatActivity {
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             mBluetoothConnection.write(byteArr);
             Snackbar.make(view, "String F2 Sent", Snackbar.LENGTH_SHORT).show();
+        } else
+            Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public void startFastestPath(View view) {
+        byteArr = getResources().getString(R.string.start_fastest_path).getBytes(charset);
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
+            mBluetoothConnection.write(byteArr);
+            Snackbar.make(view, "Fastest Path Started", Snackbar.LENGTH_SHORT).show();
         } else
             Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }

@@ -16,7 +16,7 @@ public class Util {
 
     static String wayPoint = "Not Selected";
     static String startPoint = "0,0";
-    static String heading = "forward";
+    static String heading = "right";
     static int orientation = 0;
     static ArrayList<Integer> outOfBoundsLeft = new ArrayList<Integer>(Arrays.asList(30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 245, 255, 270, 285));
     static ArrayList<Integer> outOfBoundsRight = new ArrayList<Integer>(Arrays.asList(42, 57, 72, 87, 102, 117, 132, 147, 162, 177, 192, 207, 222, 237, 252, 267, 282, 297));
@@ -76,7 +76,7 @@ public class Util {
         for (int y = 0; y <= 2; y++)
             for (int x = 0; x <= 2; x++)
                 updateBgColor(x + "," + y, m, R.color.bot);
-        updateBgColor("1,2", m, R.color.heading);
+        updateBgColor("2,1", m, R.color.heading);
     }
 
     public static void initGoal(ArrayList<mazeCell> m) {
@@ -133,18 +133,25 @@ public class Util {
     }
 
     public static String gridTest(String message) {
-        // Log.d(TAG, "receivedMessage: message --- " + message);
+        //Log.d("Test: ", "receivedMessage: message --- " + message);
         ArrayList<String> result = new ArrayList<>();
         if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
-            String amdString = message.substring(11, message.length() - 2);
+            String amdString = message.substring(11, message.length() - 3);
+
+            System.out.println("Printing String...");
+            System.out.println(amdString);
             String binaryString = new BigInteger(amdString, 16).toString(2);
+
+
+
+
             int col=15;
-            int row=0;
+            int row=19;
             binaryString = new StringBuffer(binaryString).reverse().toString();
             for(char c: binaryString.toCharArray()){
                 if(col == 0){
                     col=15;
-                    row++;
+                    row--;
                 }
                 if(c == '1'){
                     String  string = "obs (" + String.valueOf(col-1) + "," + String.valueOf(row) + ")";

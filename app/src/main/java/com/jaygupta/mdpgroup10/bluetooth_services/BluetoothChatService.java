@@ -81,7 +81,7 @@ public class BluetoothChatService extends Service {
             botMoveIntent.putExtra("receivedMessage", receivedMessage);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(botMoveIntent);
         } else if(receivedMessage.contains("exploredPath")){
-            String resultString = Util.gridTest(receivedMessage);
+            String resultString = Util.gridTest(receivedMessage.substring(4));
             Intent exploredPath = new Intent("exploredPath");
             exploredPath.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(exploredPath);
@@ -91,7 +91,7 @@ public class BluetoothChatService extends Service {
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(changeBotPosition);
         }
         else if(receivedMessage.contains("grid")){
-            String resultString = Util.gridTest(receivedMessage);
+            String resultString = Util.gridTest(receivedMessage.substring(4));
             Intent gridObstacles = new Intent("gridObstacles");
             gridObstacles.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gridObstacles);

@@ -53,7 +53,7 @@ public class RobotDrive {
                 else if (Util.outOfBoundsRight.contains(currentPosition) && Util.getHeading().equals("right"))
                     System.out.println("Out of Bounds");
                 else {
-                    mBluetoothConnection.write(byteArr);
+                    // mBluetoothConnection.write(byteArr);
                     if (Util.getHeading().equals("forward")) {
                         for (int i = 0; i <= 2; i++) {
                             mazeCells.get(currentPosition + i).setBgColor(R.color.maze);
@@ -135,7 +135,7 @@ public class RobotDrive {
         byteArr =context.getResources().getString(R.string.bluetooth_move_left).getBytes(charset);
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             if(!cmdFromAMD)
-            mBluetoothConnection.write(byteArr);
+            // mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
 
@@ -179,7 +179,7 @@ public class RobotDrive {
         byteArr = context.getResources().getString(R.string.bluetooth_move_right).getBytes(charset);
         if (mBluetoothConnection.getBluetoothConnectionStatus()) {
             if(!cmdFromAMD)
-            mBluetoothConnection.write(byteArr);
+            // mBluetoothConnection.write(byteArr);
 
             setCurrentPosition();
 
