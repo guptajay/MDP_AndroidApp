@@ -10,8 +10,8 @@ import java.util.Arrays;
 public class Util {
 
 
-    static ArrayList<String> messageListItems=new ArrayList<String>();
-    static ArrayList<String> manualListItems=new ArrayList<String>();
+    static ArrayList<String> messageListItems = new ArrayList<String>();
+    static ArrayList<String> manualListItems = new ArrayList<String>();
     static ArrayList<String> obstacleList = new ArrayList<String>();
 
     static String wayPoint = "Not Selected";
@@ -54,9 +54,13 @@ public class Util {
         return startPoint;
     }
 
-    public static String getHeading() {return heading; }
+    public static String getHeading() {
+        return heading;
+    }
 
-    public static void setHeading(String head) { heading = head; }
+    public static void setHeading(String head) {
+        heading = head;
+    }
 
     public static void removeManualMessage() {
         manualListItems.remove(manualListItems.size() - 1);
@@ -87,8 +91,8 @@ public class Util {
 
     private static int updateBgColor(String location, ArrayList<mazeCell> mazeCells, int color) {
         int i = 0;
-        for(mazeCell mC : mazeCells) {
-            if(mC.getCellName() != null && mC.getCellName().equals(location))
+        for (mazeCell mC : mazeCells) {
+            if (mC.getCellName() != null && mC.getCellName().equals(location))
                 mC.setBgColor(color);
             i++;
         }
@@ -97,8 +101,8 @@ public class Util {
 
     public static int getPositionFromCoordinate(String location, ArrayList<mazeCell> mazeCells) {
         int i = 0;
-        for(mazeCell mC : mazeCells) {
-            if(mC.getCellName() != null && mC.getCellName().equals(location))
+        for (mazeCell mC : mazeCells) {
+            if (mC.getCellName() != null && mC.getCellName().equals(location))
                 return i;
             i++;
         }
@@ -132,39 +136,52 @@ public class Util {
         return pos;
     }
 
-    public static String gridTest(String message) {
+    public static String gridTest(String message, Boolean explored) {
         //Log.d("Test: ", "receivedMessage: message --- " + message);
         ArrayList<String> result = new ArrayList<>();
-        if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
-            String amdString = message.substring(11, message.length() - 3);
 
-            System.out.println("Printing String...");
-            System.out.println(amdString);
+
+        if (message.length() < 7)
+            return null;
+
+        String amdString; //message.substring(2, 6).equals("grid"))
+        if (!explored)
+            amdString = message.substring(11, message.length() - 3);
+        else
+            amdString = message.substring(19, message.length() - 3);
+
+
+        System.out.println("Printing String...");
+        System.out.println(amdString);
+        try {
             String binaryString = new BigInteger(amdString, 16).toString(2);
-
-
-
-
-            int col=15;
-            int row=19;
+            int col = 15;
+            int row = 19;
             binaryString = new StringBuffer(binaryString).reverse().toString();
-            for(char c: binaryString.toCharArray()){
-                if(col == 0){
-                    col=15;
+            for (char c : binaryString.toCharArray()) {
+                if (col == 0) {
+                    col = 15;
                     row--;
                 }
-                if(c == '1'){
-                    String  string = "obs (" + String.valueOf(col-1) + "," + String.valueOf(row) + ")";
+                if (c == '1') {
+                    String string = "obs (" + String.valueOf(col - 1) + "," + String.valueOf(row) + ")";
                     result.add(string);
                 }
                 col--;
             }
+
+            String resultString = "";
+            for (String s : result) {
+                resultString += s + "\t";
+            }
+
+            return resultString;
+        } catch (Exception e) {
+            System.out.print("Unable to parse: " + message);
+            System.out.print(e);
+
         }
-        String resultString = "";
-        for (String s : result)
-        {
-            resultString += s + "\t";
-        }
-        return resultString;
+        return "obs (5,5)";
     }
 }
+

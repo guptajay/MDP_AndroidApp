@@ -39,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -125,27 +126,43 @@ public class MainActivity extends AppCompatActivity {
         micBtn = findViewById(R.id.micBtn);
 
         /*
-        String resultString = Util.gridTest("{\"grid\" : \"01000000000000F00000000000400007E0000000000000001F80000780000000000004000800\"}");
+
+        String resultString = Util.gridTest("{\"grid\" : \"01000000000000F00000000000400007E0000000000000001F80000780000000000004000800\"}",false);
+        String explored = Util.gridTest("{\"exploredPath\" : \"00400080010000000000003F000000000000400100040F000000000380000000080010002000\"}",true);
         Log.d(TAG,"Test: " + resultString);
-        Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(resultString);
-        ArrayList<String> receivedArray = new ArrayList<>();
-        while (loc.find()) {
-            receivedArray.add(loc.group(1));
-        }
-        ArrayList<String> tempObstacleList = new ArrayList<>();
-        tempObstacleList.addAll(Util.obstacleList);
-        tempObstacleList.removeAll(receivedArray);
-        receivedArray.removeAll(Util.obstacleList);
-        System.out.println("To be Removed" + tempObstacleList);
-        System.out.println("To be Added" + receivedArray);
-        for (String s : receivedArray) {
-            int pos = Util.setObstacle(mazeCells, s, "");
-            adapter.notifyItemChanged(pos);
-        }
-        for (String s : tempObstacleList) {
-            int pos = Util.removeObstacle(mazeCells, s);
-            adapter.notifyItemChanged(pos);
-        }
+
+
+            Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(resultString);
+            ArrayList<String> receivedArray = new ArrayList<>();
+            while (loc.find()) {
+                receivedArray.add(loc.group(1));
+            }
+            ArrayList<String> tempObstacleList = new ArrayList<>();
+            tempObstacleList.addAll(Util.obstacleList);
+            tempObstacleList.removeAll(receivedArray);
+            receivedArray.removeAll(Util.obstacleList);
+            System.out.println("To be Removed" + tempObstacleList);
+            System.out.println("To be Added" + receivedArray);
+            for (String s : receivedArray) {
+                int pos = Util.setObstacle(mazeCells, s, "");
+                adapter.notifyItemChanged(pos);
+            }
+            for (String s : tempObstacleList) {
+                int pos = Util.removeObstacle(mazeCells, s);
+                adapter.notifyItemChanged(pos);
+            }
+            Matcher loc_1 = Pattern.compile("\\(([^)]+)\\)").matcher(explored);
+            ArrayList<String> receivedArray_1 = new ArrayList<>();
+            while (loc_1.find()) {
+                receivedArray_1.add(loc_1.group(1));
+            }
+            for (String s : receivedArray_1) {
+                //Update this line
+                int pos = Util.setExploredArea(mazeCells, s);
+                adapter.notifyItemChanged(pos);
+            }
+            Snackbar.make(findViewById(android.R.id.content), "Update Number" + i, Snackbar.LENGTH_SHORT).show();
+
          */
 
 
@@ -205,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         } else if (message.contains("grid")) {
-                            String receivedMessage = Util.gridTest(message.substring(10));
+                            String receivedMessage = Util.gridTest(message.substring(10), false);
                             Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
                             ArrayList<String> receivedArray = new ArrayList<>();
                             while (loc.find()) {
@@ -412,6 +429,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
+                String currentBotPos = Util.getStartPoint();
+                ArrayList<String> botPos = new ArrayList<String>(){{
+                    add(currentBotPos);
+                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
+                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + currentBotPos.charAt(2));
+                    add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                    add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                }};;
                 String receivedMessage = intent.getStringExtra("receivedMessage");
                 System.out.println(receivedMessage);
                 Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
@@ -421,8 +450,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 for (String s : receivedArray) {
                     //Update this line
-                    int pos = Util.setExploredArea(mazeCells, s);
-                    adapter.notifyItemChanged(pos);
+                    if(!botPos.contains(s)) {
+                        int pos = Util.setExploredArea(mazeCells, s);
+                        adapter.notifyItemChanged(pos);
+                    }
                 }
                 }
         }
@@ -435,6 +466,7 @@ public class MainActivity extends AppCompatActivity {
                 String receivedMessage = intent.getStringExtra("receivedMessage");
                 System.out.println(receivedMessage);
 
+                assert receivedMessage != null;
                 Matcher status = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
                 while (status.find()) {
                     System.out.println(status.group(1));
@@ -452,14 +484,15 @@ public class MainActivity extends AppCompatActivity {
                 String receivedMessage = intent.getStringExtra("receivedMessage");
 
 
-
-                Matcher newCor = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+                assert receivedMessage != null;
+                Matcher newCor = Pattern.compile("\\[(.*?)]").matcher(receivedMessage);
                 ArrayList<String> coordinates=null;
                 while (newCor.find()) {
-                    coordinates = new ArrayList<>(Arrays.asList(newCor.group(1).split(",")));
+                    coordinates = new ArrayList<>(Arrays.asList(Objects.requireNonNull(newCor.group(1)).split(",")));
                 }
                     int currentPosition = Util.getPositionFromCoordinate(Util.getStartPoint(), mazeCells);
-                    int x = Integer.parseInt(coordinates.get(0));
+                assert coordinates != null;
+                int x = Integer.parseInt(coordinates.get(0));
                     int y = 17 - Integer.parseInt(coordinates.get(1).replaceAll(" ", ""));
                     int heading = Integer.parseInt(coordinates.get(2).replaceAll(" ", ""));
                     int pos = Util.getPositionFromCoordinate(x + "," + y, mazeCells);
@@ -523,8 +556,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!manualSwitch.isChecked()) {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
+                    assert receivedMessage != null;
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                    Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+                    Matcher obsNum = Pattern.compile("\\[(.*?)]").matcher(receivedMessage);
                     while (loc.find()) {
                         while (obsNum.find()) {
                             int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
@@ -545,13 +579,13 @@ public class MainActivity extends AppCompatActivity {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
                     System.out.println(receivedMessage);
+                    assert receivedMessage != null;
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
                     ArrayList<String> receivedArray = new ArrayList<>();
                     while (loc.find()) {
                         receivedArray.add(loc.group(1));
                     }
-                    ArrayList<String> tempObstacleList = new ArrayList<>();
-                    tempObstacleList.addAll(Util.obstacleList);
+                    ArrayList<String> tempObstacleList = new ArrayList<>(Util.obstacleList);
                     tempObstacleList.removeAll(receivedArray);
                     receivedArray.removeAll(Util.obstacleList);
                     System.out.println("To be Removed" + tempObstacleList);
@@ -582,22 +616,23 @@ public class MainActivity extends AppCompatActivity {
 
                     System.out.println("Bot Movement Detected");
 
+                    assert receivedMessage != null;
                     Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                    Matcher num = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+                    Matcher num = Pattern.compile("\\[(.*?)]").matcher(receivedMessage);
 
                     System.out.println(action);
                     System.out.println(num);
 
                     while (action.find()) {
                         while(num.find()) {
-                            if (action.group(1).equals("F"))
+                            if (Objects.equals(action.group(1), "F"))
                                 for (int i = 0; i < Integer.parseInt(num.group(1)); i++)
                                     drive.moveBotForward(findViewById(android.R.id.content));
-                            else if (action.group(1).equals("L"))
+                            else if (Objects.equals(action.group(1), "L"))
                                 drive.moveBotLeft(findViewById(android.R.id.content), false);
-                            else if (action.group(1).equals("R"))
+                            else if (Objects.equals(action.group(1), "R"))
                                 drive.moveBotRight(findViewById(android.R.id.content), false);
-                            else if (action.group(1).equals("B")) {
+                            else if (Objects.equals(action.group(1), "B")) {
                                 drive.moveBotRight(findViewById(android.R.id.content), false);
                                 drive.moveBotRight(findViewById(android.R.id.content), false);
                             }
@@ -607,18 +642,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        try {
-//            unregisterReceiver(updateBluetoothStatus);
-//            LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(robotStatusUpdate);
-//            LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(mazeUpdate);
-//        } catch(IllegalArgumentException e){
-//            e.printStackTrace();
-//        }
-//    }
-
-
 }
