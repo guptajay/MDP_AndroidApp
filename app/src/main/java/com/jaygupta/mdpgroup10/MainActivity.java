@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     Charset charset = StandardCharsets.UTF_8;
     private RobotDrive drive;
     private SwitchCompat manualSwitch;
-    private Button refresh;
+    private Button refresh, reset;
     private Button moveForward, moveRight, moveLeft;
     private ImageButton micBtn;
 
@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         refresh = findViewById(R.id.refresh);
+        reset = findViewById(R.id.reset);
         manualSwitch = findViewById(R.id.manulAutoControl);
         moveForward = findViewById(R.id.moveForwardBtn);
         moveLeft = findViewById(R.id.moveLeftBtn);
@@ -165,6 +166,25 @@ public class MainActivity extends AppCompatActivity {
 
          */
 
+        reset.setOnClickListener(v -> {
+            for(int i = 0; i < 300; i++) {
+                mazeCells.get(i).setBgColor(R.color.maze);
+                mazeCells.get(i).setTextColor(R.color.mazeCellText);
+            }
+            // Initialization of the Bot
+            Util.initBot(mazeCells);
+
+            // Initialization of the Goal Area
+            Util.initGoal(mazeCells);
+
+            Util.setHeading("right");
+            Util.setStartPoint("0,0");
+
+            adapter.notifyDataSetChanged();
+
+            Snackbar.make(findViewById(android.R.id.content), "The grid has been reset!", Snackbar.LENGTH_SHORT).show();
+
+        });
 
         if (!manualSwitch.isChecked()) {
             refresh.setEnabled(false);

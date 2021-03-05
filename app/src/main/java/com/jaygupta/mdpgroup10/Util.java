@@ -116,9 +116,13 @@ public class Util {
 
     public static int setObstacle(ArrayList<mazeCell> mazeCells, String position, String obsNum) {
         int pos = getPositionFromCoordinate(position, mazeCells);
-        mazeCells.get(pos).setDisplayName(obsNum);
+        if(obsNum != "") {
+            mazeCells.get(pos).setDisplayName(obsNum);
+            mazeCells.get(pos).setTextColor(R.color.white);
+        }
         mazeCells.get(pos).setBgColor(R.color.black);
-        mazeCells.get(pos).setTextColor(R.color.white);
+        mazeCells.get(pos).setTextColor(R.color.black);
+
         return pos;
     }
 
