@@ -134,6 +134,11 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                             Util.setStartPoint(cells.get(pos).getCellName());
                             cells.get(pos - 29).setBgColor(R.color.heading);
                             Util.setHeading("forward");
+
+                            // Initialize Goal
+                            System.out.println("Initializing Goal");
+                            Util.initGoal(cells);
+
                             Snackbar.make(v, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
                         } else
                             Snackbar.make(v, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();

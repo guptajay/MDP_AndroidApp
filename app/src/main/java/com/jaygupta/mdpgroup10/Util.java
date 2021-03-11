@@ -128,7 +128,7 @@ public class Util {
 
     public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position) {
         int pos = getPositionFromCoordinate(position, mazeCells);
-        mazeCells.get(pos).setBgColor(R.color.goal);
+        mazeCells.get(pos).setBgColor(R.color.explored);
         return pos;
     }
 

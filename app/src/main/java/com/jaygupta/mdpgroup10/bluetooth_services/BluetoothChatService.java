@@ -43,10 +43,11 @@ public class BluetoothChatService extends Service {
 
 
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
-    }
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        return START_STICKY;
+//    }
+
     public BroadcastReceiver messageReceived = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -54,8 +55,11 @@ public class BluetoothChatService extends Service {
             if (intent != null && intent.getAction().equalsIgnoreCase("incomingMessage")) {
 
                 String receivedMessage = intent.getStringExtra("receivedMessage");
+
+
                 setMessageListItems("Received: " + receivedMessage);
-                setManualListItems("Received: " + receivedMessage);
+
+                setManualListItems("OK: " + receivedMessage);
                 Log.d(TAG,"Message received " + receivedMessage);
 
 

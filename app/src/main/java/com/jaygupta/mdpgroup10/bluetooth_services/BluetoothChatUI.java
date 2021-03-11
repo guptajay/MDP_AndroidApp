@@ -97,6 +97,7 @@ public class BluetoothChatUI extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "On BroadCastReceiver");
             if (intent != null && intent.getAction().equalsIgnoreCase("incomingMessage")) {
+
                 getMessageListItems();
 
                 messageListAdapter.notifyDataSetChanged();

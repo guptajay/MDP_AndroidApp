@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private Button refresh, reset;
     private Button moveForward, moveRight, moveLeft;
     private ImageButton micBtn;
-
+    private String lastCommand = "";
     private final String TAG = "Main Activity";
 
     @Override
@@ -167,23 +167,17 @@ public class MainActivity extends AppCompatActivity {
          */
 
         reset.setOnClickListener(v -> {
-            for(int i = 0; i < 300; i++) {
-                mazeCells.get(i).setBgColor(R.color.maze);
-                mazeCells.get(i).setTextColor(R.color.mazeCellText);
+            for(int m = 0; m < 300; m++) {
+                mazeCells.get(m).setBgColor(R.color.maze);
+                mazeCells.get(m).setTextColor(R.color.mazeCellText);
             }
             // Initialization of the Bot
             Util.initBot(mazeCells);
-
             // Initialization of the Goal Area
             Util.initGoal(mazeCells);
-
             Util.setHeading("right");
             Util.setStartPoint("0,0");
-
             adapter.notifyDataSetChanged();
-
-            Snackbar.make(findViewById(android.R.id.content), "The grid has been reset!", Snackbar.LENGTH_SHORT).show();
-
         });
 
         if (!manualSwitch.isChecked()) {
@@ -578,7 +572,7 @@ public class MainActivity extends AppCompatActivity {
                     String receivedMessage = intent.getStringExtra("receivedMessage");
                     assert receivedMessage != null;
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                    Matcher obsNum = Pattern.compile("\\[(.*?)]").matcher(receivedMessage);
+                    Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
                     while (loc.find()) {
                         while (obsNum.find()) {
                             int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
@@ -629,37 +623,47 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent != null && intent.getAction().equalsIgnoreCase("botUpdate")) {
+
                 manualSwitch = findViewById(R.id.manulAutoControl);
                 if (!manualSwitch.isChecked()) {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
+                    
 
-                    System.out.println("Bot Movement Detected");
+                        Log.d(TAG, "Bot Movement Detected");
 
-                    assert receivedMessage != null;
-                    Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                    Matcher num = Pattern.compile("\\[(.*?)]").matcher(receivedMessage);
+                        assert receivedMessage != null;
+                        Matcher action = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                        Matcher num = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
 
-                    System.out.println(action);
-                    System.out.println(num);
+                        System.out.println(action);
+                        System.out.println(num);
 
-                    while (action.find()) {
-                        while(num.find()) {
-                            if (Objects.equals(action.group(1), "F"))
-                                for (int i = 0; i < Integer.parseInt(num.group(1)); i++)
-                                    drive.moveBotForward(findViewById(android.R.id.content));
-                            else if (Objects.equals(action.group(1), "L"))
-                                drive.moveBotLeft(findViewById(android.R.id.content), false);
-                            else if (Objects.equals(action.group(1), "R"))
-                                drive.moveBotRight(findViewById(android.R.id.content), false);
-                            else if (Objects.equals(action.group(1), "B")) {
-                                drive.moveBotRight(findViewById(android.R.id.content), false);
-                                drive.moveBotRight(findViewById(android.R.id.content), false);
+                        while (action.find()) {
+                            while (num.find()) {
+                                if (Objects.equals(action.group(1), "F")) {
+                                    for (int i = 0; i < Integer.parseInt(num.group(1)); i++) {
+                                        Log.d(TAG, "MOVING FORWARD");
+                                        drive.moveBotForward(findViewById(android.R.id.content));
+                                    }
+                                } else if (Objects.equals(action.group(1), "L")) {
+                                    drive.moveBotLeft(findViewById(android.R.id.content), false);
+                                    Log.d(TAG, "MOVING LEFT");
+                                } else if (Objects.equals(action.group(1), "R")) {
+                                    Log.d(TAG, "MOVING RIGHT");
+                                    drive.moveBotRight(findViewById(android.R.id.content), false);
+                                } else if (Objects.equals(action.group(1), "B")) {
+                                    Log.d(TAG, "MOVING BACK");
+                                    drive.moveBotRight(findViewById(android.R.id.content), false);
+                                    drive.moveBotRight(findViewById(android.R.id.content), false);
+                                }
                             }
                         }
-                    }
+
+
                 }
             }
         }
     };
+
 }
