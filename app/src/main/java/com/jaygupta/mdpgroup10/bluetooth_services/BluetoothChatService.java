@@ -43,10 +43,11 @@ public class BluetoothChatService extends Service {
 
 
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
-    }
+//    @Override
+//    public int onStartCommand(Intent intent, int flags, int startId) {
+//        return START_STICKY;
+//    }
+
     public BroadcastReceiver messageReceived = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -54,8 +55,11 @@ public class BluetoothChatService extends Service {
             if (intent != null && intent.getAction().equalsIgnoreCase("incomingMessage")) {
 
                 String receivedMessage = intent.getStringExtra("receivedMessage");
+
+
                 setMessageListItems("Received: " + receivedMessage);
-                setManualListItems("Received: " + receivedMessage);
+
+                setManualListItems("OK: " + receivedMessage);
                 Log.d(TAG,"Message received " + receivedMessage);
 
 
@@ -81,7 +85,7 @@ public class BluetoothChatService extends Service {
             botMoveIntent.putExtra("receivedMessage", receivedMessage);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(botMoveIntent);
         } else if(receivedMessage.contains("exploredPath")){
-            String resultString = Util.gridTest(receivedMessage);
+            String resultString = Util.gridTest(receivedMessage.substring(4),true);
             Intent exploredPath = new Intent("exploredPath");
             exploredPath.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(exploredPath);
@@ -91,7 +95,7 @@ public class BluetoothChatService extends Service {
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(changeBotPosition);
         }
         else if(receivedMessage.contains("grid")){
-            String resultString = Util.gridTest(receivedMessage);
+            String resultString = Util.gridTest(receivedMessage.substring(4),false);
             Intent gridObstacles = new Intent("gridObstacles");
             gridObstacles.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gridObstacles);

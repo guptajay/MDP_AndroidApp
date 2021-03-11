@@ -10,13 +10,13 @@ import java.util.Arrays;
 public class Util {
 
 
-    static ArrayList<String> messageListItems=new ArrayList<String>();
-    static ArrayList<String> manualListItems=new ArrayList<String>();
+    static ArrayList<String> messageListItems = new ArrayList<String>();
+    static ArrayList<String> manualListItems = new ArrayList<String>();
     static ArrayList<String> obstacleList = new ArrayList<String>();
 
     static String wayPoint = "Not Selected";
     static String startPoint = "0,0";
-    static String heading = "forward";
+    static String heading = "right";
     static int orientation = 0;
     static ArrayList<Integer> outOfBoundsLeft = new ArrayList<Integer>(Arrays.asList(30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 245, 255, 270, 285));
     static ArrayList<Integer> outOfBoundsRight = new ArrayList<Integer>(Arrays.asList(42, 57, 72, 87, 102, 117, 132, 147, 162, 177, 192, 207, 222, 237, 252, 267, 282, 297));
@@ -54,9 +54,13 @@ public class Util {
         return startPoint;
     }
 
-    public static String getHeading() {return heading; }
+    public static String getHeading() {
+        return heading;
+    }
 
-    public static void setHeading(String head) { heading = head; }
+    public static void setHeading(String head) {
+        heading = head;
+    }
 
     public static void removeManualMessage() {
         manualListItems.remove(manualListItems.size() - 1);
@@ -76,7 +80,7 @@ public class Util {
         for (int y = 0; y <= 2; y++)
             for (int x = 0; x <= 2; x++)
                 updateBgColor(x + "," + y, m, R.color.bot);
-        updateBgColor("1,2", m, R.color.heading);
+        updateBgColor("2,1", m, R.color.heading);
     }
 
     public static void initGoal(ArrayList<mazeCell> m) {
@@ -87,8 +91,8 @@ public class Util {
 
     private static int updateBgColor(String location, ArrayList<mazeCell> mazeCells, int color) {
         int i = 0;
-        for(mazeCell mC : mazeCells) {
-            if(mC.getCellName() != null && mC.getCellName().equals(location))
+        for (mazeCell mC : mazeCells) {
+            if (mC.getCellName() != null && mC.getCellName().equals(location))
                 mC.setBgColor(color);
             i++;
         }
@@ -97,8 +101,8 @@ public class Util {
 
     public static int getPositionFromCoordinate(String location, ArrayList<mazeCell> mazeCells) {
         int i = 0;
-        for(mazeCell mC : mazeCells) {
-            if(mC.getCellName() != null && mC.getCellName().equals(location))
+        for (mazeCell mC : mazeCells) {
+            if (mC.getCellName() != null && mC.getCellName().equals(location))
                 return i;
             i++;
         }
@@ -112,15 +116,19 @@ public class Util {
 
     public static int setObstacle(ArrayList<mazeCell> mazeCells, String position, String obsNum) {
         int pos = getPositionFromCoordinate(position, mazeCells);
-        mazeCells.get(pos).setDisplayName(obsNum);
+        if(obsNum != "") {
+            mazeCells.get(pos).setDisplayName(obsNum);
+            mazeCells.get(pos).setTextColor(R.color.white);
+        }
         mazeCells.get(pos).setBgColor(R.color.black);
-        mazeCells.get(pos).setTextColor(R.color.white);
+        mazeCells.get(pos).setTextColor(R.color.black);
+
         return pos;
     }
 
     public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position) {
         int pos = getPositionFromCoordinate(position, mazeCells);
-        mazeCells.get(pos).setBgColor(R.color.goal);
+        mazeCells.get(pos).setBgColor(R.color.explored);
         return pos;
     }
 
@@ -132,32 +140,52 @@ public class Util {
         return pos;
     }
 
-    public static String gridTest(String message) {
-        // Log.d(TAG, "receivedMessage: message --- " + message);
+    public static String gridTest(String message, Boolean explored) {
+        //Log.d("Test: ", "receivedMessage: message --- " + message);
         ArrayList<String> result = new ArrayList<>();
-        if (message.length() > 7 && message.substring(2, 6).equals("grid")) {
-            String amdString = message.substring(11, message.length() - 2);
+
+
+        if (message.length() < 7)
+            return null;
+
+        String amdString; //message.substring(2, 6).equals("grid"))
+        if (!explored)
+            amdString = message.substring(11, message.length() - 3);
+        else
+            amdString = message.substring(19, message.length() - 3);
+
+
+        System.out.println("Printing String...");
+        System.out.println(amdString);
+        try {
             String binaryString = new BigInteger(amdString, 16).toString(2);
-            int col=15;
-            int row=0;
+            int col = 15;
+            int row = 19;
             binaryString = new StringBuffer(binaryString).reverse().toString();
-            for(char c: binaryString.toCharArray()){
-                if(col == 0){
-                    col=15;
-                    row++;
+            for (char c : binaryString.toCharArray()) {
+                if (col == 0) {
+                    col = 15;
+                    row--;
                 }
-                if(c == '1'){
-                    String  string = "obs (" + String.valueOf(col-1) + "," + String.valueOf(row) + ")";
+                if (c == '1') {
+                    String string = "obs (" + String.valueOf(col - 1) + "," + String.valueOf(row) + ")";
                     result.add(string);
                 }
                 col--;
             }
+
+            String resultString = "";
+            for (String s : result) {
+                resultString += s + "\t";
+            }
+
+            return resultString;
+        } catch (Exception e) {
+            System.out.print("Unable to parse: " + message);
+            System.out.print(e);
+
         }
-        String resultString = "";
-        for (String s : result)
-        {
-            resultString += s + "\t";
-        }
-        return resultString;
+        return "obs (5,5)";
     }
 }
+

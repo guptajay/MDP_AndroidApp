@@ -83,7 +83,7 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                 dialog.dismiss();
                 switch (which) {
                     case 0:
-                        String s = context.getResources().getString(R.string.bluetooth_waypoint) + "FPW (" + cells.get(pos).getCellName() + ")";
+                        String s = context.getResources().getString(R.string.bluetooth_waypoint) + "FPW:" + cells.get(pos).getCellName();
                         byteArr = s.getBytes(charset);
                         if (bluetoothConnection.getBluetoothConnectionStatus()) {
 
@@ -134,6 +134,11 @@ public class mazeRecViewAdapter extends RecyclerView.Adapter<mazeRecViewAdapter.
                             Util.setStartPoint(cells.get(pos).getCellName());
                             cells.get(pos - 29).setBgColor(R.color.heading);
                             Util.setHeading("forward");
+
+                            // Initialize Goal
+                            System.out.println("Initializing Goal");
+                            Util.initGoal(cells);
+
                             Snackbar.make(v, "Coordinate [" + Util.getStartPoint() + "] set as " + selectItem[which], Snackbar.LENGTH_LONG).show();
                         } else
                             Snackbar.make(v, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();

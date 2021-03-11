@@ -51,6 +51,21 @@
 
             </TextView>
 
+            <Button
+                android:id="@+id/reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_below="@id/botStateText"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/ic_reset"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                >
+
+            </Button>
+
         </RelativeLayout>
     </RelativeLayout>
 
@@ -207,9 +222,9 @@
                     android:id="@+id/FP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="sendStringF2"
-                    android:text="@string/FP"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="10dp"
+                    android:onClick="startFastestPath"
+                    android:text="@string/FP">
 
                 </Button>
 
