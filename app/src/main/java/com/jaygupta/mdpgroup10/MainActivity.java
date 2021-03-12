@@ -623,9 +623,8 @@ public class MainActivity extends AppCompatActivity {
                         int pos = Util.removeObstacle(mazeCells, s);
                         adapter.notifyItemChanged(pos);
                     }
-                    Util.obstacleList.removeAll(tempObstacleList);
                     Util.obstacleList.addAll(receivedArray);
-
+                    Util.obstacleList.removeAll(tempObstacleList);
                 }
             }
         }
