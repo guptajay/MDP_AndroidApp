@@ -584,9 +584,18 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+    //AND|{"grid" : "01000000000000F00000000000400007E0000000000000001F80000780000000000004000800"}
+
     public BroadcastReceiver gridObstacles = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            String DEBUG_TAG = "DEBUG_TAG";
+
+            Log.d(DEBUG_TAG,"gridObstacles Function Called");
+
+
             if (intent != null && intent.getAction().equalsIgnoreCase("gridObstacles")) {
                 manualSwitch = findViewById(R.id.manulAutoControl);
                 if (!manualSwitch.isChecked()) {
@@ -604,7 +613,9 @@ public class MainActivity extends AppCompatActivity {
                     receivedArray.removeAll(Util.obstacleList);
                     System.out.println("To be Removed" + tempObstacleList);
                     System.out.println("To be Added" + receivedArray);
+
                     for (String s : receivedArray) {
+                        Log.d(DEBUG_TAG, s);
                         int pos = Util.setObstacle(mazeCells, s, "");
                         adapter.notifyItemChanged(pos);
                     }
@@ -666,4 +677,22 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: called");
+        super.onDestroy();
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(updateBluetoothStatus);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(robotStatusUpdate);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mazeUpdate);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(botUpdate);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(gridObstacles);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(changeBotPosition);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(updateExploredGrid);
+
+        } catch(IllegalArgumentException e){
+            e.printStackTrace();
+        }
+    }
 }
