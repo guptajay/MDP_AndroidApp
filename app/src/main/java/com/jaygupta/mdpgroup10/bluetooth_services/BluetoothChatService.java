@@ -28,9 +28,7 @@ to the static array list in the Utils class
 public class BluetoothChatService extends Service {
     @Nullable
 
-    ListView messagesListView;
-    //ArrayList<String> messageListItems;
-    ArrayAdapter<String> messageListAdapter;
+
     static final String TAG = "Bluetooth Chat Service";
 
     @Override
@@ -56,10 +54,11 @@ public class BluetoothChatService extends Service {
 
                 String receivedMessage = intent.getStringExtra("receivedMessage");
 
-
                 setMessageListItems("Received: " + receivedMessage);
 
                 setManualListItems("OK: " + receivedMessage);
+
+
                 Log.d(TAG,"Message received " + receivedMessage);
 
 
@@ -100,18 +99,22 @@ public class BluetoothChatService extends Service {
             gridObstacles.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gridObstacles);
         }
+    }
 
 
-
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: called");
+        super.onDestroy();
+        try {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceived);
+        } catch(IllegalArgumentException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
     }
 }
