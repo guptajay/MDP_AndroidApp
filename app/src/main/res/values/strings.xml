@@ -30,4 +30,5 @@
     <string name="bluetooth_startpoint">ALG|</string>
     <string name="start_fastest_path">ALG|FP</string>
     <string name="start_exploration">ALG|EXP</string>
+    <string name="img_string">Image Strings</string>
 </resources>

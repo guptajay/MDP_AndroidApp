@@ -13,6 +13,15 @@ public class Util {
     static ArrayList<String> messageListItems = new ArrayList<String>();
     static ArrayList<String> manualListItems = new ArrayList<String>();
     static ArrayList<String> obstacleList = new ArrayList<String>();
+    static ArrayList<String> imagesList = new ArrayList<String>();
+
+    public static ArrayList<String> getImagesList() {
+        return imagesList;
+    }
+
+    public static void addImagesList(String img) {
+        imagesList.add(img);
+    }
 
     static String wayPoint = "Not Selected";
     static String startPoint = "0,0";

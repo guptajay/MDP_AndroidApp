@@ -1,5 +1,6 @@
 package com.jaygupta.mdpgroup10;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton micBtn;
     private String lastCommand = "";
     private final String TAG = "Main Activity";
+    private Button seeImageStrings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         refresh = findViewById(R.id.refresh);
+        seeImageStrings = findViewById(R.id.imageString);
         reset = findViewById(R.id.reset);
         manualSwitch = findViewById(R.id.manulAutoControl);
         moveForward = findViewById(R.id.moveForwardBtn);
@@ -165,6 +168,30 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(findViewById(android.R.id.content), "Update Number" + i, Snackbar.LENGTH_SHORT).show();
 
          */
+
+        seeImageStrings.setOnClickListener(v -> {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Image Processing String");
+
+            // add a list
+            ArrayList<String> orderNumbers = Util.getImagesList();
+
+            builder.setItems(orderNumbers.toArray(new String[0]), (dialog, which) -> {
+                switch (which) {
+                    case 0: // horse
+                    case 1: // cow
+                    case 2: // camel
+                    case 3: // sheep
+                    case 4: // goat
+                }
+            });
+
+            // create and show the alert dialog
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        });
 
         reset.setOnClickListener(v -> {
             for(int m = 0; m < 300; m++) {
@@ -575,6 +602,7 @@ public class MainActivity extends AppCompatActivity {
                     Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
                     while (loc.find()) {
                         while (obsNum.find()) {
+                            Util.addImagesList("(" + loc.group(1) + "," + obsNum.group(1) + ")");
                             int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
                             adapter.notifyItemChanged(pos);
                         }

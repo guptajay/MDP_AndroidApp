@@ -66,6 +66,20 @@
 
             </Button>
 
+            <Button
+                android:id="@+id/imageString"
+                android:layout_below="@+id/reset"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:onClick="startFastestPath"
+                android:text="@string/img_string"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp">
+
+            </Button>
+
         </RelativeLayout>
     </RelativeLayout>
 
