@@ -249,7 +249,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_below="@+id/FP"
                     android:text="@string/exp"
-                    android:onClick="sendStringF2"
+                    android:onClick="startExploration"
                     android:layout_centerHorizontal="true">
 
                 </Button>

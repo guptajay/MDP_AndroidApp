@@ -412,6 +412,15 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
+    public void startExploration(View view) {
+        byteArr = getResources().getString(R.string.start_exploration).getBytes(charset);
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
+            mBluetoothConnection.write(byteArr);
+            Snackbar.make(view, "Exploration Started", Snackbar.LENGTH_SHORT).show();
+        } else
+            Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
