@@ -123,14 +123,29 @@ public class Util {
         robotStatus.setText(s);
     }
 
-    public static int setObstacle(ArrayList<mazeCell> mazeCells, String position, String obsNum) {
+    public static int setObstacle(ArrayList<mazeCell> mazeCells, String position, String obsNum, String heading) {
         int pos = getPositionFromCoordinate(position, mazeCells);
-        if(obsNum != "") {
+        System.out.println("ObsNum Length: " + obsNum.length());
+        if(obsNum.length() > 0) {
+            System.out.println("Setting Numbered Obstacle");
+            System.out.println(obsNum);
             mazeCells.get(pos).setDisplayName(obsNum);
             mazeCells.get(pos).setTextColor(R.color.white);
+            mazeCells.get(pos).setBgColor(R.color.black);
+            /*
+            if(Integer.parseInt(heading) == 0) {
+                mazeCells.get(pos + 15).setDisplayName("▲");
+                mazeCells.get(pos + 15).setTextColor(R.color.black);
+            } else if(Integer.parseInt(heading) == 1) {
+                mazeCells.get(pos + 15).setDisplayName("▲");
+                mazeCells.get(pos).setTextColor(R.color.black);
+            }
+             */
+        } else {
+            System.out.println("Setting Non-Numbered Obstacle");
+            mazeCells.get(pos).setBgColor(R.color.black);
+            mazeCells.get(pos).setTextColor(R.color.black);
         }
-        mazeCells.get(pos).setBgColor(R.color.black);
-        mazeCells.get(pos).setTextColor(R.color.black);
 
         return pos;
     }

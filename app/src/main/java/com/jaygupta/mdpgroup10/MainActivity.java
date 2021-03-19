@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton micBtn;
     private String lastCommand = "";
     private final String TAG = "Main Activity";
-    private Button seeImageStrings;
+    private Button seeImageStrings, calibrateBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,11 +173,24 @@ public class MainActivity extends AppCompatActivity {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Image Processing String");
+            String imgProcess = "{ ";
 
             // add a list
             ArrayList<String> orderNumbers = Util.getImagesList();
 
-            builder.setItems(orderNumbers.toArray(new String[0]), (dialog, which) -> {
+            for (int i = 0; i < orderNumbers.size(); i++) {
+                if(i == orderNumbers.size() - 1)
+                    imgProcess += orderNumbers.get(i);
+                else
+                    imgProcess += orderNumbers.get(i) + ", ";
+            }
+
+            imgProcess += " }";
+
+            ArrayList<String> finalString = new ArrayList<>();
+            finalString.add(imgProcess);
+
+            builder.setItems(finalString.toArray(new String[0]), (dialog, which) -> {
                 switch (which) {
                     case 0: // horse
                     case 1: // cow
@@ -190,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
             // create and show the alert dialog
             AlertDialog dialog = builder.create();
             dialog.show();
-
         });
 
         reset.setOnClickListener(v -> {
@@ -258,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                             Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(message);
                             while (loc.find()) {
                                 while (obsNum.find()) {
-                                    int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
+                                    int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1), "");
                                     adapter.notifyItemChanged(pos);
                                 }
                             }
@@ -276,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                             System.out.println("To be Removed" + tempObstacleList);
                             System.out.println("To be Added" + receivedArray);
                             for (String s : receivedArray) {
-                                int pos = Util.setObstacle(mazeCells, s, "");
+                                int pos = Util.setObstacle(mazeCells, s, "", "");
                                 adapter.notifyItemChanged(pos);
                             }
                             for (String s : tempObstacleList) {
@@ -606,14 +618,22 @@ public class MainActivity extends AppCompatActivity {
                 if (!manualSwitch.isChecked()) {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
+                    System.out.println("Setting Image Recognition Obstacle");
                     assert receivedMessage != null;
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
                     Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+                    Matcher heading = Pattern.compile("\\{(.*?)\\}").matcher(receivedMessage);
                     while (loc.find()) {
                         while (obsNum.find()) {
-                            Util.addImagesList("(" + loc.group(1) + "," + obsNum.group(1) + ")");
-                            int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
-                            adapter.notifyItemChanged(pos);
+                            while(heading.find()) {
+                                Util.addImagesList("(" + obsNum.group(1) + "," + loc.group(1) + ")");
+                                System.out.println("Location: " + loc.group(1));
+                                System.out.println("Obstacle Number: " + obsNum.group(1));
+                                System.out.println("Heading: " + heading.group(1));
+
+                                int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1), heading.group(1));
+                                adapter.notifyItemChanged(pos);
+                            }
                         }
                     }
                 }
@@ -653,7 +673,7 @@ public class MainActivity extends AppCompatActivity {
 
                     for (String s : receivedArray) {
                         Log.d(DEBUG_TAG, s);
-                        int pos = Util.setObstacle(mazeCells, s, "");
+                        int pos = Util.setObstacle(mazeCells, s, "", "");
                         adapter.notifyItemChanged(pos);
                     }
                     for (String s : tempObstacleList) {
