@@ -1,5 +1,6 @@
 package com.jaygupta.mdpgroup10;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton micBtn;
     private String lastCommand = "";
     private final String TAG = "Main Activity";
+    private Button seeImageStrings, calibrateBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         refresh = findViewById(R.id.refresh);
+        seeImageStrings = findViewById(R.id.imageString);
         reset = findViewById(R.id.reset);
         manualSwitch = findViewById(R.id.manulAutoControl);
         moveForward = findViewById(R.id.moveForwardBtn);
@@ -165,6 +168,42 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(findViewById(android.R.id.content), "Update Number" + i, Snackbar.LENGTH_SHORT).show();
 
          */
+
+        seeImageStrings.setOnClickListener(v -> {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Image Processing String");
+            String imgProcess = "{ ";
+
+            // add a list
+            ArrayList<String> orderNumbers = Util.getImagesList();
+
+            for (int i = 0; i < orderNumbers.size(); i++) {
+                if(i == orderNumbers.size() - 1)
+                    imgProcess += orderNumbers.get(i);
+                else
+                    imgProcess += orderNumbers.get(i) + ", ";
+            }
+
+            imgProcess += " }";
+
+            ArrayList<String> finalString = new ArrayList<>();
+            finalString.add(imgProcess);
+
+            builder.setItems(finalString.toArray(new String[0]), (dialog, which) -> {
+                switch (which) {
+                    case 0: // horse
+                    case 1: // cow
+                    case 2: // camel
+                    case 3: // sheep
+                    case 4: // goat
+                }
+            });
+
+            // create and show the alert dialog
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        });
 
         reset.setOnClickListener(v -> {
             for(int m = 0; m < 300; m++) {
@@ -231,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                             Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(message);
                             while (loc.find()) {
                                 while (obsNum.find()) {
-                                    int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
+                                    int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1), "");
                                     adapter.notifyItemChanged(pos);
                                 }
                             }
@@ -249,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                             System.out.println("To be Removed" + tempObstacleList);
                             System.out.println("To be Added" + receivedArray);
                             for (String s : receivedArray) {
-                                int pos = Util.setObstacle(mazeCells, s, "");
+                                int pos = Util.setObstacle(mazeCells, s, "", "");
                                 adapter.notifyItemChanged(pos);
                             }
                             for (String s : tempObstacleList) {
@@ -385,6 +424,15 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
     }
 
+    public void startExploration(View view) {
+        byteArr = getResources().getString(R.string.start_exploration).getBytes(charset);
+        if (mBluetoothConnection.getBluetoothConnectionStatus()) {
+            mBluetoothConnection.write(byteArr);
+            Snackbar.make(view, "Exploration Started", Snackbar.LENGTH_SHORT).show();
+        } else
+            Snackbar.make(view, Constants.BLUETOOTH_NOT_CONNECTED, Snackbar.LENGTH_SHORT).show();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -442,35 +490,43 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
-                String currentBotPos = Util.getStartPoint();
-                ArrayList<String> botPos = new ArrayList<String>(){{
-                    add(currentBotPos);
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + currentBotPos.charAt(2));
-                    add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                    add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                }};;
-                String receivedMessage = intent.getStringExtra("receivedMessage");
-                System.out.println(receivedMessage);
-                Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                ArrayList<String> receivedArray = new ArrayList<>();
-                while (loc.find()) {
-                    receivedArray.add(loc.group(1));
-                }
-                for (String s : receivedArray) {
-                    //Update this line
-                    if(!botPos.contains(s)) {
-                        int pos = Util.setExploredArea(mazeCells, s);
-                        adapter.notifyItemChanged(pos);
+
+            try {
+                if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
+                    String currentBotPos = Util.getStartPoint();
+                    ArrayList<String> botPos = new ArrayList<String>() {{
+                        add(currentBotPos);
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + currentBotPos.charAt(2));
+                        add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                        add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                    }};
+                    ;
+                    String receivedMessage = intent.getStringExtra("receivedMessage");
+                    System.out.println(receivedMessage);
+                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                    ArrayList<String> receivedArray = new ArrayList<>();
+                    while (loc.find()) {
+                        receivedArray.add(loc.group(1));
+                    }
+                    for (String s : receivedArray) {
+                        //Update this line
+                        if (!botPos.contains(s)) {
+                            int pos = Util.setExploredArea(mazeCells, s);
+                            adapter.notifyItemChanged(pos);
+                        }
                     }
                 }
-                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
+
     };
 
     public BroadcastReceiver robotStatusUpdate = new BroadcastReceiver() {
@@ -570,13 +626,22 @@ public class MainActivity extends AppCompatActivity {
                 if (!manualSwitch.isChecked()) {
                     Util.removeManualMessage();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
+                    System.out.println("Setting Image Recognition Obstacle");
                     assert receivedMessage != null;
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
                     Matcher obsNum = Pattern.compile("\\[(.*?)\\]").matcher(receivedMessage);
+                    Matcher heading = Pattern.compile("\\{(.*?)\\}").matcher(receivedMessage);
                     while (loc.find()) {
                         while (obsNum.find()) {
-                            int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1));
-                            adapter.notifyItemChanged(pos);
+                            while(heading.find()) {
+                                Util.addImagesList("(" + obsNum.group(1) + "," + loc.group(1) + ")");
+                                System.out.println("Location: " + loc.group(1));
+                                System.out.println("Obstacle Number: " + obsNum.group(1));
+                                System.out.println("Heading: " + heading.group(1));
+
+                                int pos = Util.setObstacle(mazeCells, loc.group(1), obsNum.group(1), heading.group(1));
+                                adapter.notifyItemChanged(pos);
+                            }
                         }
                     }
                 }
@@ -616,7 +681,7 @@ public class MainActivity extends AppCompatActivity {
 
                     for (String s : receivedArray) {
                         Log.d(DEBUG_TAG, s);
-                        int pos = Util.setObstacle(mazeCells, s, "");
+                        int pos = Util.setObstacle(mazeCells, s, "", "");
                         adapter.notifyItemChanged(pos);
                     }
                     for (String s : tempObstacleList) {

@@ -66,6 +66,20 @@
 
             </Button>
 
+            <Button
+                android:id="@+id/imageString"
+                android:layout_below="@+id/reset"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:onClick="startFastestPath"
+                android:text="@string/explored_string"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp">
+
+            </Button>
+
         </RelativeLayout>
     </RelativeLayout>
 
@@ -235,7 +249,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_below="@+id/FP"
                     android:text="@string/exp"
-                    android:onClick="sendStringF2"
+                    android:onClick="startExploration"
                     android:layout_centerHorizontal="true">
 
                 </Button>
