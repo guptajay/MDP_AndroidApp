@@ -74,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:onClick="startFastestPath"
-                android:text="@string/img_string"
+                android:text="@string/explored_string"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp">
 

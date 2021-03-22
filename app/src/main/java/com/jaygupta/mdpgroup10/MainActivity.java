@@ -490,35 +490,43 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
-                String currentBotPos = Util.getStartPoint();
-                ArrayList<String> botPos = new ArrayList<String>(){{
-                    add(currentBotPos);
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + currentBotPos.charAt(2));
-                    add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                    add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                    add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                }};;
-                String receivedMessage = intent.getStringExtra("receivedMessage");
-                System.out.println(receivedMessage);
-                Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                ArrayList<String> receivedArray = new ArrayList<>();
-                while (loc.find()) {
-                    receivedArray.add(loc.group(1));
-                }
-                for (String s : receivedArray) {
-                    //Update this line
-                    if(!botPos.contains(s)) {
-                        int pos = Util.setExploredArea(mazeCells, s);
-                        adapter.notifyItemChanged(pos);
+
+            try {
+                if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
+                    String currentBotPos = Util.getStartPoint();
+                    ArrayList<String> botPos = new ArrayList<String>() {{
+                        add(currentBotPos);
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + currentBotPos.charAt(2));
+                        add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                        add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
+                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
+                    }};
+                    ;
+                    String receivedMessage = intent.getStringExtra("receivedMessage");
+                    System.out.println(receivedMessage);
+                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                    ArrayList<String> receivedArray = new ArrayList<>();
+                    while (loc.find()) {
+                        receivedArray.add(loc.group(1));
+                    }
+                    for (String s : receivedArray) {
+                        //Update this line
+                        if (!botPos.contains(s)) {
+                            int pos = Util.setExploredArea(mazeCells, s);
+                            adapter.notifyItemChanged(pos);
+                        }
                     }
                 }
-                }
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
         }
+
     };
 
     public BroadcastReceiver robotStatusUpdate = new BroadcastReceiver() {
