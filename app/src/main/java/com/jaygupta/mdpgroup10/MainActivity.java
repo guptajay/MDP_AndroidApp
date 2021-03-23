@@ -235,11 +235,26 @@ public class MainActivity extends AppCompatActivity {
             imgProcess += " }";
              */
 
+            ArrayList<String> messages = Util.getMessageListItems();
             String part_1 = "Explored/Unexplored (Part 1) - ";
-            part_1 += Util.generateHexMDF(MDF);
-
             String part_2 = "Obstacles (Part 2) - ";
-            part_2 += Util.generateMDF_2(Util.formatMDFString_1(MDF), Util.formatMDFString_1(Util.generateObsString_1(mazeCells)));
+
+
+            // Get String 1
+            for (int i = messages.size(); i-- > 0; ) {
+                if(messages.get(i).contains("exploredPath")) {
+                    part_1 += messages.get(i);
+                    break;
+                }
+            }
+
+            // Get String 2
+            for (int i = messages.size(); i-- > 0; ) {
+                if(messages.get(i).contains("grid")) {
+                    part_2 += messages.get(i);
+                    break;
+                }
+            }
 
             ArrayList<String> finalString = new ArrayList<>();
             finalString.add(part_1);
