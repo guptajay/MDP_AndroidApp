@@ -6,6 +6,7 @@ import android.widget.TextView;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Util {
 
@@ -82,7 +83,7 @@ public class Util {
     public static void initMaze(ArrayList<mazeCell> m) {
         for (int y = 19; y >= 0; y--)
             for (int x = 0; x < 15; x++)
-                m.add(new mazeCell(x + "," + y, R.color.maze, x + "," + y, R.color.mazeCellText));
+                m.add(new mazeCell(x + "," + y, R.color.maze, x + "," + y, R.color.mazeCellText, false, false));
     }
 
     public static void initBot(ArrayList<mazeCell> m) {
@@ -145,6 +146,7 @@ public class Util {
             System.out.println("Setting Non-Numbered Obstacle");
             mazeCells.get(pos).setBgColor(R.color.black);
             mazeCells.get(pos).setTextColor(R.color.black);
+            mazeCells.get(pos).setObstacle(true);
         }
 
         return pos;
@@ -153,6 +155,7 @@ public class Util {
     public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position) {
         int pos = getPositionFromCoordinate(position, mazeCells);
         mazeCells.get(pos).setBgColor(R.color.explored);
+        mazeCells.get(pos).setExplored(true);
         return pos;
     }
 
@@ -161,8 +164,90 @@ public class Util {
         mazeCells.get(pos).setDisplayName(position);
         mazeCells.get(pos).setBgColor(R.color.maze);
         mazeCells.get(pos).setTextColor(R.color.mazeCellText);
+        mazeCells.get(pos).setObstacle(false);
         return pos;
     }
+
+    public static String generateMDFString_1(ArrayList<mazeCell> mazeCells) {
+
+
+        ArrayList<Integer> listRows = new ArrayList<Integer>(Arrays.asList(0, 15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180, 195, 210, 225, 245, 255, 270, 285));
+        Collections.reverse(listRows);
+
+        String MDF = "";
+
+        for (Integer num : listRows) {
+            for(int i = num; i < num + 15; i++) {
+                if(mazeCells.get(i).getExplored() == true) {
+                    MDF += "1";
+                } else {
+                    MDF += "0";
+                }
+            }
+        }
+        return MDF;
+    }
+
+    public static String generateObsString_1(ArrayList<mazeCell> mazeCells) {
+        String MDF = "";
+        for(int i = 0; i < 300; i++) {
+            if(mazeCells.get(i).getObstacle() == true) {
+                MDF += "1";
+            } else {
+                MDF += "0";
+            }
+        }
+        return MDF;
+    }
+
+    public static String generateHexMDF(String MDF) {
+        MDF  = "11" + MDF;
+        MDF = MDF + "11";
+        return MDF;
+    }
+
+    public static String generateMDF_2(ArrayList<String> exploredList, ArrayList<String> obstacleList) {
+        System.out.println("Explored String" + exploredList);
+        System.out.println("Obstacle String" + obstacleList);
+
+        for(int index=0;index<exploredList.size();index++){
+            if(exploredList.get(index).length() != obstacleList.get(index).length())
+                System.out.println("invalid size");
+        }
+
+        String string = "";
+        for(int elementIndex = 0; elementIndex < exploredList.size() ; elementIndex++) {
+            for(int index = 0;index < exploredList.get(elementIndex).length();index++) {
+                if(exploredList.get(elementIndex).charAt(index) == '1'){
+
+                    if(obstacleList.get(elementIndex).charAt(index) == '1') {
+                        string+='1';
+                    }
+                    else{
+                        string+='0';
+                    }
+                }
+            }
+        }
+        String stx = new BigInteger(string, 2).toString(16);
+        return stx;
+    }
+
+    public static ArrayList formatMDFString_1(String MDF) {
+        ArrayList<String> MDFString = new ArrayList<String>();
+        int j = 1;
+        String temp = "";
+        for(int i = 0; i < 300; i++) {
+            temp += MDF.substring(i, i+1);
+            if(j % 15 == 0 && i != 0) {
+                MDFString.add(temp);
+                temp = "";
+            }
+            j++;
+        }
+        return MDFString;
+    }
+
 
     public static String gridTest(String message, Boolean explored) {
         //Log.d("Test: ", "receivedMessage: message --- " + message);
@@ -183,8 +268,14 @@ public class Util {
         System.out.println(amdString);
         try {
             String binaryString = new BigInteger(amdString, 16).toString(2);
+            // Remove Padding
+            System.out.println("PRINTING CONVERED STRING");
+            System.out.println(binaryString);
             int col = 15;
             int row = 19;
+            binaryString=binaryString.substring(2,binaryString.length()-2);
+            System.out.println(binaryString);
+            // binaryString = "111000001110000111000001110000111111111110000111111111110000111111111110000111111111110000111111111110000111111100011100111111100011100111111100011100111111100011100111111111111100111111111111100111111111111100111111111111111111111111111111000000011111111000000011111111000000011111111000000011111111";
             binaryString = new StringBuffer(binaryString).reverse().toString();
             for (char c : binaryString.toCharArray()) {
                 if (col == 0) {

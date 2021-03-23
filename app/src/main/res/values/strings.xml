@@ -31,5 +31,5 @@
     <string name="start_fastest_path">ALG|FP</string>
     <string name="start_exploration">ALG|EXP</string>
     <string name="img_string">Image Strings</string>
-    <string name="explored_string">Explore MDF</string>
+    <string name="explored_string">MDF String</string>
 </resources>
