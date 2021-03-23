@@ -1,6 +1,7 @@
 package com.jaygupta.mdpgroup10;
 
 import android.app.Activity;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.math.BigInteger;
@@ -10,6 +11,7 @@ import java.util.Collections;
 
 public class Util {
 
+    private static String TAG = "UTIL DEBUG";
 
     static ArrayList<String> messageListItems = new ArrayList<String>();
     static ArrayList<String> manualListItems = new ArrayList<String>();
@@ -250,9 +252,7 @@ public class Util {
 
 
     public static String gridTest(String message, Boolean explored) {
-        //Log.d("Test: ", "receivedMessage: message --- " + message);
         ArrayList<String> result = new ArrayList<>();
-
 
         if (message.length() < 7)
             return null;
@@ -261,22 +261,22 @@ public class Util {
         if (!explored)
             amdString = message.substring(11, message.length() - 3);
         else
-            amdString = message.substring(19, message.length() - 3);
+            amdString = message.substring(19, message.length() - 2);
 
+        Log.d(TAG, "received HEX string: " + amdString);
 
-        System.out.println("Printing String...");
-        System.out.println(amdString);
         try {
             String binaryString = new BigInteger(amdString, 16).toString(2);
-            // Remove Padding
-            System.out.println("PRINTING CONVERED STRING");
-            System.out.println(binaryString);
+
+            Log.d(TAG,"HEX converted binary string: " + binaryString);
+
             int col = 15;
             int row = 19;
             binaryString=binaryString.substring(2,binaryString.length()-2);
-            System.out.println(binaryString);
-            // binaryString = "111000001110000111000001110000111111111110000111111111110000111111111110000111111111110000111111111110000111111100011100111111100011100111111100011100111111100011100111111111111100111111111111100111111111111100111111111111111111111111111111000000011111111000000011111111000000011111111000000011111111";
             binaryString = new StringBuffer(binaryString).reverse().toString();
+
+            Log.d(TAG,"Processed binary string: " + binaryString);
+
             for (char c : binaryString.toCharArray()) {
                 if (col == 0) {
                     col = 15;
