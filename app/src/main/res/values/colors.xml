@@ -11,7 +11,7 @@
     <color name="maze">#FFCCCB</color>
     <color name="heading">#940008</color>
     <color name="goal">#85C1E9</color>
-    <color name="explored">#DAF7A6</color>
+    <color name="explored">#19ED7C</color>
     <color name="mazeCellText">#676767</color>
     <color name="waypoint">#7E83D1</color>
 </resources>

@@ -258,17 +258,21 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                Log.d(TAG, "Final Explored Message: " + part_1.substring(29, part_1.length() - 2));
-                Log.d(TAG, "Final Explored Grid: " + part_2.substring(21, part_2.length() - 2));
+                Log.d(TAG, "Final Explored Message: " + part_1.substring(32, part_1.length() - 2));
+                Log.d(TAG, "Final Explored Grid: " + part_2.substring(24, part_2.length() - 2));
 
-                ArrayList<String> inputExploredArray = Util.formatMDFString_1(part_1.substring(29, part_1.length() - 2));
-                ArrayList<String> inputObstacleArray = Util.formatMDFString_1(part_2.substring(21, part_2.length() - 2));
+
+                ArrayList<String> inputExploredArray = Util.formatMDFString_1(part_1.substring(32, part_1.length() - 2));
+                ArrayList<String> inputObstacleArray = Util.formatMDFString_1(part_2.substring(24, part_2.length() - 2));
 
                 String exploredMDF = Util.generateMDF_2(inputExploredArray, inputObstacleArray);
 
                 Log.d(TAG, "Final Representation: " + exploredMDF);
 
-                String p1 = "Explored/Unexplored (Part 1) - " + part_1.substring(29, part_1.length() - 2);
+
+             //  Log.d(TAG, "PART11:" + part_1);
+
+                String p1 = "Explored/Unexplored (Part 1) - " + part_1.substring(32, part_1.length() - 2);
                 String p2 = "Obstacles (Part 2) - " + exploredMDF;
 
                 // parse message to hex
