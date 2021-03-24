@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.jaygupta.mdpgroup10.utils.Constants;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 
 public class Util {
 
@@ -238,11 +241,20 @@ public class Util {
     }
 
     public static ArrayList formatMDFString_1(String MDF) {
+
+        //String binaryString = new BigInteger(MDF, 16).toString(2);
+
+        String binaryString = HexBinaryConverter(MDF);
+
+        Log.d(TAG,"formatted binary string: " + binaryString.length());
+
+        binaryString=binaryString.substring(2,binaryString.length()-2);
+
         ArrayList<String> MDFString = new ArrayList<String>();
         int j = 1;
         String temp = "";
         for(int i = 0; i < 300; i++) {
-            temp += MDF.substring(i, i+1);
+            temp += binaryString.substring(i, i+1);
             if(j % 15 == 0 && i != 0) {
                 MDFString.add(temp);
                 temp = "";
@@ -268,8 +280,8 @@ public class Util {
         Log.d(TAG, "received HEX string: " + amdString);
 
         try {
-            String binaryString = new BigInteger(amdString, 16).toString(2);
-
+            //String binaryString = new BigInteger(amdString, 16).toString(2);
+            String binaryString = HexBinaryConverter(amdString);
             Log.d(TAG,"HEX converted binary string: " + binaryString);
 
             int col = 15;
@@ -304,5 +316,19 @@ public class Util {
         }
         return "obs (5,5)";
     }
+
+    public static String HexBinaryConverter(String HEX){
+        String output = "";
+        int length = HEX.length();
+        int index = 0;
+
+        while(index < length){
+            output+=Constants.HEX_TABLE.get(HEX.substring(index,index+1));
+            index++;
+        }
+        return output;
+
+    }
+
 }
 
