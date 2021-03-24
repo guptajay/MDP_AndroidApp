@@ -157,9 +157,10 @@ public class Util {
         return pos;
     }
 
-    public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position, boolean setColor) {
+    public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position) {
         int pos = getPositionFromCoordinate(position, mazeCells);
-        if(setColor)
+        int currentBgColor = mazeCells.get(pos).getBgColor();
+        if(currentBgColor != R.color.black && currentBgColor != R.color.bot && currentBgColor != R.color.heading)
             mazeCells.get(pos).setBgColor(R.color.explored);
         mazeCells.get(pos).setExplored(true);
         return pos;
