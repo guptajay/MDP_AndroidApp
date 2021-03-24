@@ -236,13 +236,17 @@ public class Util {
                 }
             }
         }
-        String stx = new BigInteger(string, 2).toString(16);
-        return stx;
+        int index = 0;
+        int length = string.length();
+        String output="";
+        while(index<length){
+            output+=Constants.HEX_TABLE.get(string.substring(index,index+4));
+            index+=4;
+        }
+        return output;
     }
 
     public static ArrayList formatMDFString_1(String MDF) {
-
-        //String binaryString = new BigInteger(MDF, 16).toString(2);
 
         String binaryString = HexBinaryConverter(MDF);
 
