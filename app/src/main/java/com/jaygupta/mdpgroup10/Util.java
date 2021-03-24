@@ -154,9 +154,10 @@ public class Util {
         return pos;
     }
 
-    public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position) {
+    public static int setExploredArea(ArrayList<mazeCell> mazeCells, String position, boolean setColor) {
         int pos = getPositionFromCoordinate(position, mazeCells);
-        mazeCells.get(pos).setBgColor(R.color.explored);
+        if(setColor)
+            mazeCells.get(pos).setBgColor(R.color.explored);
         mazeCells.get(pos).setExplored(true);
         return pos;
     }
@@ -259,7 +260,7 @@ public class Util {
 
         String amdString; //message.substring(2, 6).equals("grid"))
         if (!explored)
-            amdString = message.substring(11, message.length() - 3);
+            amdString = message.substring(11, message.length() - 2);
         else
             amdString = message.substring(19, message.length() - 2);
 

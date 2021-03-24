@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
          */
 
-
+        /*
         String receivedMessage = Util.gridTest("{\"exploredPath\" : \"FFC07F80FF01FE03FFFFFFF3FFE7FFCFFF9C7F38FE71FCE3F87FF0FFE1FFC3FF87FF0E0E1C1F\"}",true);
         ;
         System.out.println(receivedMessage);
@@ -186,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+         */
 
         seeImageStrings.setOnClickListener(v -> {
 
@@ -571,7 +572,7 @@ public class MainActivity extends AppCompatActivity {
                     while (loc.find()) {
                         receivedArray.add(loc.group(1));
                     }
-                    /*
+
                     ArrayList<String> botPos = new ArrayList<String>() {{
                         add(currentBotPos);
                         add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
@@ -583,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
                         add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
                         add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
                     }};
-                    ;
+                    /*
                     String receivedMessage = intent.getStringExtra("receivedMessage");
                     System.out.println(receivedMessage);
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
@@ -594,10 +595,13 @@ public class MainActivity extends AppCompatActivity {
                      */
                     for (String s : receivedArray) {
                         //Update this line
-                     //   if (!botPos.contains(s)) {
-                            int pos = Util.setExploredArea(mazeCells, s);
-                            adapter.notifyItemChanged(pos);
-                     //   }
+                        int pos;
+                        if (botPos.contains(s)) {
+                            pos = Util.setExploredArea(mazeCells, s, false);
+                        } else {
+                            pos = Util.setExploredArea(mazeCells, s, true);
+                        }
+                        adapter.notifyItemChanged(pos);
                     }
                 }
             }
