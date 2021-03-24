@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -84,7 +82,7 @@ public class BluetoothChatService extends Service {
             botMoveIntent.putExtra("receivedMessage", receivedMessage);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(botMoveIntent);
         } else if(receivedMessage.contains("exploredPath")){
-            String resultString = Util.gridTest(receivedMessage.substring(4),true);
+            String resultString = Util.gridTest(receivedMessage,true);
             Intent exploredPath = new Intent("exploredPath");
             exploredPath.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(exploredPath);
@@ -94,7 +92,7 @@ public class BluetoothChatService extends Service {
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(changeBotPosition);
         }
         else if(receivedMessage.contains("grid")){
-            String resultString = Util.gridTest(receivedMessage.substring(4),false);
+            String resultString = Util.gridTest(receivedMessage,false);
             Intent gridObstacles = new Intent("gridObstacles");
             gridObstacles.putExtra("receivedMessage", resultString);
             LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(gridObstacles);

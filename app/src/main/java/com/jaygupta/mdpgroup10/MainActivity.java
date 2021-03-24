@@ -167,12 +167,60 @@ public class MainActivity extends AppCompatActivity {
             }
             Snackbar.make(findViewById(android.R.id.content), "Update Number" + i, Snackbar.LENGTH_SHORT).show();
 
+
+
+         */
+
+        /*
+        String receivedMessage = Util.gridTest("{\"exploredPath\" : \"FFC07F80FF01FE03FFFFFFF3FFE7FFCFFF9C7F38FE71FCE3F87FF0FFE1FFC3FF87FF0E0E1C1F\"}",true);
+        ;
+        System.out.println(receivedMessage);
+        Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+        ArrayList<String> receivedArray = new ArrayList<>();
+        while (loc.find()) {
+            receivedArray.add(loc.group(1));
+        }
+        for (String s : receivedArray) {
+            int pos = Util.setExploredArea(mazeCells, s);
+            adapter.notifyItemChanged(pos);
+        }
+
+
          */
 
         seeImageStrings.setOnClickListener(v -> {
 
+            System.out.println("MDF String");
+            /*
+            String MDF = "111111110000000" +
+                    "111111110000000" +
+                    "111111110000000" +
+                    "111111110000000" +
+                    "111111111111111" +
+                    "111111111111111" +
+                    "001111111111111" +
+                    "001111111111111" +
+                    "001111111111111" +
+                    "001110001111111" +
+                    "001110001111111" +
+                    "001110001111111" +
+                    "001110001111111" +
+                    "000011111111111" +
+                    "000011111111111" +
+                    "000011111111111" +
+                    "000011111111111" +
+                    "000011111111111" +
+                    "000011100000111" +
+                    "000011100000111";
+
+             */
+            String MDF = Util.generateMDFString_1(mazeCells);
+            System.out.println(MDF);
+            System.out.println(Util.generateHexMDF(MDF));
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Image Processing String");
+            builder.setTitle("MDF Strings");
+            /*
             String imgProcess = "{ ";
 
             // add a list
@@ -186,9 +234,32 @@ public class MainActivity extends AppCompatActivity {
             }
 
             imgProcess += " }";
+             */
+
+            ArrayList<String> messages = Util.getMessageListItems();
+            String part_1 = "Explored/Unexplored (Part 1) - ";
+            String part_2 = "Obstacles (Part 2) - ";
+
+
+            // Get String 1
+            for (int i = messages.size(); i-- > 0; ) {
+                if(messages.get(i).contains("exploredPath")) {
+                    part_1 += messages.get(i);
+                    break;
+                }
+            }
+
+            // Get String 2
+            for (int i = messages.size(); i-- > 0; ) {
+                if(messages.get(i).contains("grid")) {
+                    part_2 += messages.get(i);
+                    break;
+                }
+            }
 
             ArrayList<String> finalString = new ArrayList<>();
-            finalString.add(imgProcess);
+            finalString.add(part_1);
+            finalString.add(part_2);
 
             builder.setItems(finalString.toArray(new String[0]), (dialog, which) -> {
                 switch (which) {
@@ -494,6 +565,14 @@ public class MainActivity extends AppCompatActivity {
             try {
                 if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
                     String currentBotPos = Util.getStartPoint();
+                    String receivedMessage = intent.getStringExtra("receivedMessage");
+                    System.out.println(receivedMessage);
+                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                    ArrayList<String> receivedArray = new ArrayList<>();
+                    while (loc.find()) {
+                        receivedArray.add(loc.group(1));
+                    }
+
                     ArrayList<String> botPos = new ArrayList<String>() {{
                         add(currentBotPos);
                         add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
@@ -505,7 +584,7 @@ public class MainActivity extends AppCompatActivity {
                         add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
                         add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
                     }};
-                    ;
+                    /*
                     String receivedMessage = intent.getStringExtra("receivedMessage");
                     System.out.println(receivedMessage);
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
@@ -513,12 +592,16 @@ public class MainActivity extends AppCompatActivity {
                     while (loc.find()) {
                         receivedArray.add(loc.group(1));
                     }
+                     */
                     for (String s : receivedArray) {
                         //Update this line
-                        if (!botPos.contains(s)) {
-                            int pos = Util.setExploredArea(mazeCells, s);
-                            adapter.notifyItemChanged(pos);
+                        int pos;
+                        if (botPos.contains(s)) {
+                            pos = Util.setExploredArea(mazeCells, s, false);
+                        } else {
+                            pos = Util.setExploredArea(mazeCells, s, true);
                         }
+                        adapter.notifyItemChanged(pos);
                     }
                 }
             }
