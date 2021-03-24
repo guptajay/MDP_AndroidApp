@@ -5,6 +5,7 @@ package com.jaygupta.mdpgroup10.utils;
 Declare constants here
  */
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public final class Constants {
@@ -30,5 +31,30 @@ public final class Constants {
 
 
     public static final int REQUEST_CODE_SPEECH_INPUT = 1;
+
+    public static final HashMap<String,String> HEX_TABLE = new HashMap<String, String>() {{
+        put("0", "0000");
+        put("1", "0001");
+        put("2", "0010");
+        put("3", "0011");
+        put("4", "0100");
+        put("5", "0101");
+        put("6", "0110");
+        put("7", "0111");
+        put("8", "1000");
+        put("9", "1001");
+        put("A", "1010");
+        put("B", "1011");
+        put("C", "1100");
+        put("D", "1101");
+        put("E", "1110");
+        put("F", "1111");
+        put("a", "1010");
+        put("b", "1011");
+        put("c", "1100");
+        put("d", "1101");
+        put("e", "1110");
+        put("f", "1111");
+    }};
 
 }
