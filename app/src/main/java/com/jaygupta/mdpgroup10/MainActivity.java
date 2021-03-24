@@ -561,10 +561,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
             try {
                 if (intent != null && intent.getAction().equalsIgnoreCase("exploredPath")) {
-                    String currentBotPos = Util.getStartPoint();
+                    // String currentBotPos = Util.getStartPoint();
                     String receivedMessage = intent.getStringExtra("receivedMessage");
                     System.out.println(receivedMessage);
                     Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
@@ -572,35 +571,10 @@ public class MainActivity extends AppCompatActivity {
                     while (loc.find()) {
                         receivedArray.add(loc.group(1));
                     }
-
-                    ArrayList<String> botPos = new ArrayList<String>() {{
-                        add(currentBotPos);
-                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + currentBotPos.charAt(2));
-                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + currentBotPos.charAt(2));
-                        add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                        add(currentBotPos.charAt(0) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 1) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 1));
-                        add((Integer.parseInt(String.valueOf(currentBotPos.charAt(0))) + 2) + "," + (Integer.parseInt(String.valueOf(currentBotPos.charAt(2))) + 2));
-                    }};
-                    /*
-                    String receivedMessage = intent.getStringExtra("receivedMessage");
-                    System.out.println(receivedMessage);
-                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                    ArrayList<String> receivedArray = new ArrayList<>();
-                    while (loc.find()) {
-                        receivedArray.add(loc.group(1));
-                    }
-                     */
                     for (String s : receivedArray) {
                         //Update this line
                         int pos;
-                        if (botPos.contains(s)) {
-                            pos = Util.setExploredArea(mazeCells, s, false);
-                        } else {
-                            pos = Util.setExploredArea(mazeCells, s, true);
-                        }
+                        pos = Util.setExploredArea(mazeCells, s);
                         adapter.notifyItemChanged(pos);
                     }
                 }
@@ -609,7 +583,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
     };
 
     public BroadcastReceiver robotStatusUpdate = new BroadcastReceiver() {
@@ -741,41 +714,45 @@ public class MainActivity extends AppCompatActivity {
 
             String DEBUG_TAG = "DEBUG_TAG";
 
-            Log.d(DEBUG_TAG,"gridObstacles Function Called");
+            Log.d(DEBUG_TAG, "gridObstacles Function Called");
 
+            try {
+                if (intent != null && intent.getAction().equalsIgnoreCase("gridObstacles")) {
+                    manualSwitch = findViewById(R.id.manulAutoControl);
+                    if (!manualSwitch.isChecked()) {
+                        Util.removeManualMessage();
+                        String receivedMessage = intent.getStringExtra("receivedMessage");
+                        System.out.println(receivedMessage);
+                        assert receivedMessage != null;
+                        Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
+                        ArrayList<String> receivedArray = new ArrayList<>();
+                        while (loc.find()) {
+                            receivedArray.add(loc.group(1));
+                        }
+                        ArrayList<String> tempObstacleList = new ArrayList<>(Util.obstacleList);
+                        tempObstacleList.removeAll(receivedArray);
+                        receivedArray.removeAll(Util.obstacleList);
+                        System.out.println("To be Removed" + tempObstacleList);
+                        System.out.println("To be Added" + receivedArray);
 
-            if (intent != null && intent.getAction().equalsIgnoreCase("gridObstacles")) {
-                manualSwitch = findViewById(R.id.manulAutoControl);
-                if (!manualSwitch.isChecked()) {
-                    Util.removeManualMessage();
-                    String receivedMessage = intent.getStringExtra("receivedMessage");
-                    System.out.println(receivedMessage);
-                    assert receivedMessage != null;
-                    Matcher loc = Pattern.compile("\\(([^)]+)\\)").matcher(receivedMessage);
-                    ArrayList<String> receivedArray = new ArrayList<>();
-                    while (loc.find()) {
-                        receivedArray.add(loc.group(1));
+                        for (String s : receivedArray) {
+                            Log.d(DEBUG_TAG, s);
+                            int pos = Util.setObstacle(mazeCells, s, "", "");
+                            adapter.notifyItemChanged(pos);
+                        }
+                        for (String s : tempObstacleList) {
+                            int pos = Util.removeObstacle(mazeCells, s);
+                            adapter.notifyItemChanged(pos);
+                        }
+                        Util.obstacleList.addAll(receivedArray);
+                        Util.obstacleList.removeAll(tempObstacleList);
                     }
-                    ArrayList<String> tempObstacleList = new ArrayList<>(Util.obstacleList);
-                    tempObstacleList.removeAll(receivedArray);
-                    receivedArray.removeAll(Util.obstacleList);
-                    System.out.println("To be Removed" + tempObstacleList);
-                    System.out.println("To be Added" + receivedArray);
-
-                    for (String s : receivedArray) {
-                        Log.d(DEBUG_TAG, s);
-                        int pos = Util.setObstacle(mazeCells, s, "", "");
-                        adapter.notifyItemChanged(pos);
-                    }
-                    for (String s : tempObstacleList) {
-                        int pos = Util.removeObstacle(mazeCells, s);
-                        adapter.notifyItemChanged(pos);
-                    }
-                    Util.obstacleList.addAll(receivedArray);
-                    Util.obstacleList.removeAll(tempObstacleList);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+
     };
 
     public BroadcastReceiver botUpdate = new BroadcastReceiver() {
