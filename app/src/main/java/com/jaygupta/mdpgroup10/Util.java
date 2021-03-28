@@ -236,9 +236,18 @@ public class Util {
         }
         int index = 0;
         int length = string.length();
+        int padding = (4 - length%4)%4;
         String output="";
+
+        String temp = "";
+
+        if(padding > 0)
+            temp+= String.format("%0" + padding + "d",0).replace("0","0");
+        temp+=string;
+        Log.d(TAG, "PART 2 STRING" +  string);
+
         while(index<length){
-            output+=Constants.HEX_TABLE.get(string.substring(index,index+4));
+            output+=Constants.HEX_TABLE.get(temp.substring(index,index+4));
             index+=4;
         }
         return output;

@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         Constants CONSTANTS;
 
+
+
         startService(new Intent(MainActivity.this, BluetoothChatService.class));
 
         // Initialization of the Maze
@@ -253,27 +255,47 @@ public class MainActivity extends AppCompatActivity {
 
                 // Get String 2
                 for (int i = messages.size(); i-- > 0; ) {
-                    if (messages.get(i).contains("grid")) {
+                    if (messages.get(i).contains("correctPath")) {
                         part_2 += messages.get(i);
                         break;
                     }
                 }
+
+
+/*
+                if(part_1.equals(part_2)) {
+                    Log.d(TAG,"received stacked message");
+                    String[] parts = part_1.split("AND");
+                    part_1 = "Received: AND|" + parts[1].substring(1);
+                    part_2 = "Received: AND|" + parts[2].substring(1);
+                    Log.d(TAG, "Split Explored: " + part_1);
+                    Log.d(TAG, "Split Obstacles: " + part_2);
+                }
+
+ */
                 Log.d(TAG, "Final Explored Message: " + part_1.substring(32, part_1.length() - 2));
                 Log.d(TAG, "Final Explored Grid: " + part_2.substring(24, part_2.length() - 2));
 
 
-                ArrayList<String> inputExploredArray = Util.formatMDFString_1(part_1.substring(32, part_1.length() - 2));
-                ArrayList<String> inputObstacleArray = Util.formatMDFString_1(part_2.substring(24, part_2.length() - 2));
+              //  ArrayList<String> inputExploredArray = Util.formatMDFString_1(part_1.substring(32, part_1.length() - 2));
+               // ArrayList<String> inputObstacleArray = Util.formatMDFString_1(part_2.substring(24, part_2.length() - 2));
 
-                String exploredMDF = Util.generateMDF_2(inputExploredArray, inputObstacleArray);
+                //String exploredMDF = Util.generateMDF_2(inputExploredArray, inputObstacleArray);
 
-                Log.d(TAG, "Final Representation: " + exploredMDF);
+            //    Log.d(TAG, "Final Representation: " + exploredMDF);
 
 
              //  Log.d(TAG, "PART11:" + part_1);
 
-                String p1 = "Explored/Unexplored (Part 1) - " + part_1.substring(32, part_1.length() - 2);
-                String p2 = "Obstacles (Part 2) - " + exploredMDF;
+             String p1 = part_1.replace("Received:","");
+             String p2 = part_2.replace("Received:","");
+             p1.replace("AND|", "");
+             p2.replace("AND|", "");
+
+             p1 = "Part 1 (Exploration)" + p1;
+             p2 = "Part 2 (Obstacles)" + p2;
+
+           //     String p2 = "Obstacles (Part 2) - " + exploredMDF;
 
                 // parse message to hex
 
